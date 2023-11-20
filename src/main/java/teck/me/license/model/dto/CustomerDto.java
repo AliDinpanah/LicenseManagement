@@ -1,33 +1,27 @@
-package teck.me.license.model;
+package teck.me.license.model.dto;
 
-import javax.persistence.*;
+import teck.me.license.model.Customer;
+import teck.me.license.model.License;
+
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
-@Entity
-public class Customer {
+public class CustomerDto {
 
-    @GeneratedValue
-    @Id
-    private long id;
-
-    @Column(name = "name", nullable = false)
     private String name;
 
     private String email;
 
-    @Pattern(regexp = "09/d{9}")
+
     private String phoneNumber;
 
-    @OneToMany
     private List<License> licenses;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    public CustomerDto(Customer customer) {
+        this.name=customer.getName();
+        this.email=customer.getEmail();
+        this.licenses=customer.getLicenses();
+        this.phoneNumber=customer.getPhoneNumber();
     }
 
     public String getName() {
