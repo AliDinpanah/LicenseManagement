@@ -1,31 +1,26 @@
-package teck.me.license.model;
+package teck.me.license.model.dto;
 
-import javax.persistence.*;
+import teck.me.license.model.CryptoKey;
+import teck.me.license.model.License;
+
+import javax.persistence.OneToMany;
 import java.util.List;
 
-@Entity
-public class Project {
-
-    @GeneratedValue
-    @Id
-    private long id;
+public class ProjectDto {
 
     private String name;
 
     private String description;
 
-    @OneToMany(mappedBy = "project")
     private List<License> licenses;
 
-    @OneToMany(mappedBy = "project")
     private List<CryptoKey> cryptoKeys;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    public ProjectDto(String name, String description, List<License> licenses, List<CryptoKey> cryptoKeys) {
+        this.name = name;
+        this.description = description;
+        this.licenses = licenses;
+        this.cryptoKeys = cryptoKeys;
     }
 
     public String getName() {
