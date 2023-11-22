@@ -1,18 +1,19 @@
 package teck.me.license.service;
 
 import teck.me.license.model.CryptoKey;
+import teck.me.license.model.dto.CryptoKeyDto;
 
 import java.util.List;
 
 public interface CryptoKeyService {
 
-    List<CryptoKey> getAllCryptoKeys();
+    List<CryptoKeyDto> getAllCryptoKeys();
 
-    CryptoKey getCryptoKeyById(long id);
+    CryptoKeyDto getCryptoKeyById(String uuid);
 
-    CryptoKey saveCryptoKey(CryptoKey cryptoKey);
+    CryptoKeyDto saveCryptoKey(CryptoKeyDto cryptoKeyDto);
 
-    void deleteCryptoKey(long id);
+    void deleteCryptoKey(String uuid);
 
-    CryptoKey updateCryptoKey(long id, CryptoKey updatedCryptoKey);
+    CryptoKey updateCryptoKey(String uuid, CryptoKeyDto updatedCryptoKey);
 }

@@ -3,30 +3,51 @@ package teck.me.license.service.imp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teck.me.license.model.CryptoKey;
+import teck.me.license.model.dto.CryptoKeyDto;
 import teck.me.license.repository.CryptoKeyRepository;
 import teck.me.license.service.CryptoKeyService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CryptoKeyServiceImp implements CryptoKeyService {
     @Autowired
     private CryptoKeyRepository cryptoKeyRepository;
 
-    public List<CryptoKey> getAllCryptoKeys() {
-        return cryptoKeyRepository.findAll();
+    public List<CryptoKeyDto> getAllCryptoKeys() {
+        List<CryptoKey> cryptoKeys = cryptoKeyRepository.findAll();
+        List<CryptoKeyDto> cryptoKeyDtos = new ArrayList<>();
+        for (CryptoKey cryptoKey:cryptoKeys){
+            cryptoKeyDtos.add(new CryptoKeyDto(cryptoKey.getDescription(), cryptoKey.getProject(), cryptoKey.getLicenses()));
+        }
+        return cryptoKeyDtos;
     }
 
-    public CryptoKey getCryptoKeyById(long id) {
-        return cryptoKeyRepository.findById(id).orElse(null);
+    public CryptoKeyDto getCryptoKeyById(String uuid) {
+        CryptoKey cryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
+        CryptoKeyDto cryptoKeyDto=new CryptoKeyDto(cryptoKey.getDescription(), cryptoKey.getProject(), cryptoKey.getLicenses());
+        return cryptoKeyDto;
     }
 
-    public CryptoKey saveCryptoKey(CryptoKey cryptoKey) {
-        return cryptoKeyRepository.save(cryptoKey);
+    public CryptoKeyDto saveCryptoKey(CryptoKeyDto cryptoKeyDto) {
+        CryptoKey cryptoKey=new CryptoKey();
+        while (true){
+            cryptoKey.setUuid(UUID.randomUUID().toString());
+            if(!cryptoKeyRepository.existsByUuid(cryptoKey.getUuid())){
+                break;
+            }
+        }
+        cryptoKey.setLicenses(cryptoKeyDto.getLicenses());
+        cryptoKey.setDescription(cryptoKeyDto.getDescription());
+        cryptoKey.setProject(cryptoKeyDto.getProject());
+        cryptoKeyRepository.save(cryptoKey);
+        return cryptoKeyDto;
     }
 
-    public CryptoKey updateCryptoKey(long id, CryptoKey updatedCryptoKey) {
-        CryptoKey existingCryptoKey = cryptoKeyRepository.findById(id).get();
+    public CryptoKey updateCryptoKey(String uuid, CryptoKeyDto updatedCryptoKey) {
+        CryptoKey existingCryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
         if (existingCryptoKey != null) {
             // Update fields as needed
 
@@ -35,7 +56,7 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
         return null; // Handle not found scenario
     }
 
-    public void deleteCryptoKey(long id) {
-        cryptoKeyRepository.deleteById(id);
+    public void deleteCryptoKey(String uuid) {
+        cryptoKeyRepository.deleteByUuid(uuid);
     }
 }
