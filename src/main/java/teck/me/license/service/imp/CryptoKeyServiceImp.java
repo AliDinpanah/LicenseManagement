@@ -19,7 +19,7 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
     public List<CryptoKeyDto> getAllCryptoKeys() {
         List<CryptoKey> cryptoKeys = cryptoKeyRepository.findAll();
         List<CryptoKeyDto> cryptoKeyDtos = new ArrayList<>();
-        for (CryptoKey cryptoKey:cryptoKeys){
+        for (CryptoKey cryptoKey : cryptoKeys) {
             cryptoKeyDtos.add(new CryptoKeyDto(cryptoKey.getDescription(), cryptoKey.getProject(), cryptoKey.getLicenses()));
         }
         return cryptoKeyDtos;
@@ -27,15 +27,15 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
 
     public CryptoKeyDto getCryptoKeyById(String uuid) {
         CryptoKey cryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
-        CryptoKeyDto cryptoKeyDto=new CryptoKeyDto(cryptoKey.getDescription(), cryptoKey.getProject(), cryptoKey.getLicenses());
+        CryptoKeyDto cryptoKeyDto = new CryptoKeyDto(cryptoKey.getDescription(), cryptoKey.getProject(), cryptoKey.getLicenses());
         return cryptoKeyDto;
     }
 
     public CryptoKeyDto saveCryptoKey(CryptoKeyDto cryptoKeyDto) {
-        CryptoKey cryptoKey=new CryptoKey();
-        while (true){
+        CryptoKey cryptoKey = new CryptoKey();
+        while (true) {
             cryptoKey.setUuid(UUID.randomUUID().toString());
-            if(!cryptoKeyRepository.existsByUuid(cryptoKey.getUuid())){
+            if (!cryptoKeyRepository.existsByUuid(cryptoKey.getUuid())) {
                 break;
             }
         }

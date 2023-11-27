@@ -19,7 +19,7 @@ public class Customer {
     @Pattern(regexp = "09/d{9}")
     private String phoneNumber;
 
-    @OneToMany
+    @OneToMany(mappedBy = "customer")
     private List<License> licenses;
 
     public long getId() {

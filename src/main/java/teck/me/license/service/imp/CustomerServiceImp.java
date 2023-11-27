@@ -51,4 +51,9 @@ public class CustomerServiceImp {
     public void deleteCustomer(long id) {
         customerRepository.deleteById(id);
     }
+
+    //use in other services
+    public Customer getCustomer(Long id){
+        return customerRepository.findById(id).get();
+    }
 }

@@ -2,6 +2,8 @@ package teck.me.license.service.imp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import teck.me.license.model.CryptoKey;
+import teck.me.license.model.License;
 import teck.me.license.model.Project;
 import teck.me.license.model.dto.ProjectDto;
 import teck.me.license.repository.ProjectRepository;
@@ -18,15 +20,15 @@ public class ProjectServiceImp implements ProjectService {
     public List<ProjectDto> getAllProjects() {
         List<Project> projects = projectRepository.findAll();
         List<ProjectDto> projectDtos = new ArrayList<>();
-        for (Project project:projects){
-            projectDtos.add(new ProjectDto(project.getName(),project.getDescription(),project.getLicenses(),project.getCryptoKeys()));
+        for (Project project : projects) {
+            projectDtos.add(new ProjectDto(project.getName(), project.getDescription(), project.getLicenses(), project.getCryptoKeys()));
         }
         return projectDtos;
     }
 
     public ProjectDto getProjectById(long id) {
         Project project = projectRepository.findById(id).get();
-        return new ProjectDto(project.getName(),project.getDescription(),project.getLicenses(),project.getCryptoKeys());
+        return new ProjectDto(project.getName(), project.getDescription(), project.getLicenses(), project.getCryptoKeys());
     }
 
     public ProjectDto saveProject(ProjectDto projectDto) {
@@ -51,6 +53,19 @@ public class ProjectServiceImp implements ProjectService {
 
     public void deleteProject(long id) {
         projectRepository.deleteById(id);
+    }
+
+    //use in other services
+    public CryptoKey findKey(String uuid){
+        return projectRepository.findByCryptoKeys_Uuid(uuid).get();
+    }
+
+    public Project getProject(Long id){
+        return projectRepository.findById(id).get();
+    }
+
+    public void saveProject(Project project){
+        projectRepository.save(project);
     }
 
 }

@@ -1,52 +1,40 @@
-package teck.me.license.model;
+package teck.me.license.model.dto;
 
-import javax.persistence.*;
+
+import teck.me.license.model.CryptoKey;
+import teck.me.license.model.Customer;
+import teck.me.license.model.Project;
+
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
-@Entity
-public class License {
-
-    @GeneratedValue
-    @Id
-    private long id;
+public class LicenseDto {
 
     private int validityDuration;
 
     private Date takeEffectTime;
 
-    private String uuid;
-
-    private boolean updatable;
-
-    private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "cryptoKey_id")
     private CryptoKey cryptoKey;
 
-    @ManyToOne
-    @JoinColumn(name = "project_id")
     private Project project;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ElementCollection
     private Map<String, String> parameters;
 
-    public License() {
-        parameters = new HashMap<>();
+    public LicenseDto() {
     }
 
-    public long getId() {
-        return id;
+    public LicenseDto(int validityDuration, Date takeEffectTime, CryptoKey cryptoKey, Project project, Customer customer) {
+        this.validityDuration = validityDuration;
+        this.takeEffectTime = takeEffectTime;
+        this.cryptoKey = cryptoKey;
+        this.project = project;
+        this.customer = customer;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public LicenseDto(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 
     public int getValidityDuration() {
@@ -63,30 +51,6 @@ public class License {
 
     public void setTakeEffectTime(Date takeEffectTime) {
         this.takeEffectTime = takeEffectTime;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public boolean isUpdatable() {
-        return updatable;
-    }
-
-    public void setUpdatable(boolean updatable) {
-        this.updatable = updatable;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public CryptoKey getCryptoKey() {

@@ -1,6 +1,7 @@
 package teck.me.license.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,6 +20,13 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private List<CryptoKey> cryptoKeys;
+
+    @ElementCollection
+    private List<String> parameters;
+
+    public Project() {
+        parameters=new ArrayList<String>();
+    }
 
     public long getId() {
         return id;
@@ -58,5 +66,13 @@ public class Project {
 
     public void setCryptoKeys(List<CryptoKey> cryptoKeys) {
         this.cryptoKeys = cryptoKeys;
+    }
+
+    public List<String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<String> parameters) {
+        this.parameters = parameters;
     }
 }
