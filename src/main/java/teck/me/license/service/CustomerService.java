@@ -1,7 +1,7 @@
 package teck.me.license.service;
 
-import teck.me.license.model.dto.CreateCustomerDto;
 import teck.me.license.model.dto.CustomerDto;
+import teck.me.license.model.dto.ListCustomerDto;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ public interface CustomerService {
 
     CustomerDto updateCustomer(long id, CustomerDto updatedCustomer);
 
-    CreateCustomerDto createCustomer(CreateCustomerDto customerDto);
+    CustomerDto createCustomer(CustomerDto customerDto);
 
-    CustomerDto getCustomerById(long id);
+    ListCustomerDto getCustomerById(long id);
 
-    List<CustomerDto> getAllCustomers();
+    List<ListCustomerDto> getAllCustomers(int page, int number);
 }

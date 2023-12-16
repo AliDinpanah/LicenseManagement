@@ -1,7 +1,11 @@
 package teck.me.license.model;
 
+import org.hibernate.annotations.Fetch;
+
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class CryptoKey {
@@ -10,14 +14,16 @@ public class CryptoKey {
     @Id
     private long id;
 
+    @Size(max = 36)
     private String uuid;
 
+    @Size(max = 255)
     private String description;
 
-    @OneToMany(mappedBy = "cryptoKey")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "cryptoKey")
     private List<License> licenses;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
 
@@ -59,5 +65,18 @@ public class CryptoKey {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CryptoKey cryptoKey = (CryptoKey) o;
+        return id == cryptoKey.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

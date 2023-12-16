@@ -5,23 +5,16 @@ import teck.me.license.model.License;
 
 import java.util.List;
 
-public class ProjectDto {
-
+public class ListProjectDto {
     private String name;
 
     private String description;
 
-    private List<License> licenses;
-
-    private List<CryptoKey> cryptoKeys;
-
     private List<String> parameters;
 
-    public ProjectDto(String name, String description, List<License> licenses, List<CryptoKey> cryptoKeys, List<String> parameters) {
+    public ListProjectDto(String name, String description, List<String> parameters) {
         this.name = name;
         this.description = description;
-        this.licenses = licenses;
-        this.cryptoKeys = cryptoKeys;
         this.parameters = parameters;
     }
 
@@ -41,23 +34,11 @@ public class ProjectDto {
         this.description = description;
     }
 
-    public List<License> getLicenses() {
-        return licenses;
-    }
-
-    public void setLicenses(List<License> licenses) {
-        this.licenses = licenses;
-    }
-
-    public List<CryptoKey> getCryptoKeys() {
-        return cryptoKeys;
-    }
-
-    public void setCryptoKeys(List<CryptoKey> cryptoKeys) {
-        this.cryptoKeys = cryptoKeys;
-    }
-
     public List<String> getParameters() {
         return parameters;
+    }
+
+    public void setParameters(List<String> parameters) {
+        this.parameters = parameters;
     }
 }

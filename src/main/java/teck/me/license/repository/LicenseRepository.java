@@ -12,4 +12,6 @@ public interface LicenseRepository extends JpaRepository<License,Long> {
     void deleteByUuid(String uuid);
 
     Optional<License> findByUuid(String uuid);
+
+    boolean existsByUuid(String uuid);
 }

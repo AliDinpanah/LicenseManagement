@@ -3,6 +3,7 @@ package teck.me.license.model.dto;
 
 import teck.me.license.model.CryptoKey;
 import teck.me.license.model.Customer;
+import teck.me.license.model.License;
 import teck.me.license.model.Project;
 
 import java.util.Date;
@@ -22,7 +23,15 @@ public class LicenseDto {
 
     private Map<String, String> parameters;
 
-    public LicenseDto() {
+    private String description;
+
+    public LicenseDto(License license) {
+        this.validityDuration = license.getValidityDuration();
+        this.takeEffectTime = license.getTakeEffectTime();
+        this.cryptoKey = license.getCryptoKey();
+        this.project = license.getProject();
+        this.customer = license.getCustomer();
+        this.description = license.getDescription();
     }
 
     public LicenseDto(int validityDuration, Date takeEffectTime, CryptoKey cryptoKey, Project project, Customer customer) {

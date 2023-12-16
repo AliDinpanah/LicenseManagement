@@ -6,5 +6,5 @@ import teck.me.license.model.Customer;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer,Long> {
-
+    boolean existsByName(String name);
 }

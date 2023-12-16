@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LicenseService {
 
-    List<LicenseDto> getAllLicenses();
+    List<LicenseDto> getAllLicenses(int page,int number);
 
     LicenseDto getLicenseById(String uuid);
 

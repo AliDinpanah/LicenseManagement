@@ -21,8 +21,10 @@ public class LicenseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LicenseDto>> getAllLicenses() {
-        List<LicenseDto> licenses = licenseService.getAllLicenses();
+    public ResponseEntity<List<LicenseDto>> getAllLicenses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int number) {
+        List<LicenseDto> licenses = licenseService.getAllLicenses(page, number);
         return new ResponseEntity<>(licenses, HttpStatus.OK);
     }
 

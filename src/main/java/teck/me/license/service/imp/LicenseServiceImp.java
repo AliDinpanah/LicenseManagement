@@ -1,6 +1,7 @@
 package teck.me.license.service.imp;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import teck.me.license.model.CryptoKey;
 import teck.me.license.model.Customer;
@@ -9,6 +10,9 @@ import teck.me.license.model.Project;
 import teck.me.license.model.dto.LicenseDto;
 import teck.me.license.repository.LicenseRepository;
 import teck.me.license.service.LicenseService;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
@@ -21,15 +25,18 @@ public class LicenseServiceImp implements LicenseService {
     @Autowired
     private CustomerServiceImp customerServiceImp;
 
-    public List<LicenseDto> getAllLicenses(){
-        List<License> licenses = licenseRepository.findAll();
+    public List<LicenseDto> getAllLicenses(int page, int number) {
+        Pageable pageable = PageRequest.of(page, number);
+        Page<License> licensePage = licenseRepository.findAll(pageable);
         List<LicenseDto> licenseDtos = new ArrayList<>();
-        for (License license:licenses){
-            licenseDtos.add(new LicenseDto(license.getValidityDuration(), license.getTakeEffectTime(),
-                    license.getCryptoKey(), license.getProject(), license.getCustomer()));
+
+        for (License license : licensePage.getContent()) {
+            licenseDtos.add(new LicenseDto(license));
         }
+
         return licenseDtos;
     }
+
 
     public LicenseDto getLicenseById(String uuid) {
         License license = licenseRepository.findByUuid(uuid).get();
@@ -37,7 +44,7 @@ public class LicenseServiceImp implements LicenseService {
                 license.getCryptoKey(), license.getProject(), license.getCustomer());
     }
 
-    public LicenseDto saveLicense(LicenseDto licenseDto){
+    public LicenseDto saveLicense(LicenseDto licenseDto) {
         License license = new License();
         license.setParameters(licenseDto.getParameters());
         license.setProject(licenseDto.getProject());
@@ -49,7 +56,7 @@ public class LicenseServiceImp implements LicenseService {
         return licenseDto;
     }
 
-    public LicenseDto updateLicense(String uuid,LicenseDto updatedLicenseDto){
+    public LicenseDto updateLicense(String uuid, LicenseDto updatedLicenseDto) {
         License license = licenseRepository.findByUuid(uuid).get();
 
         license.setParameters(updatedLicenseDto.getParameters());
@@ -88,6 +95,13 @@ public class LicenseServiceImp implements LicenseService {
         license.setCryptoKey(cryptoKey);
         license.setCustomer(customer);
         license.setProject(project);
+
+        while (true) {
+            license.setUuid(UUID.randomUUID().toString());
+            if (!licenseRepository.existsByUuid(license.getUuid())) {
+                break;
+            }
+        }
         licenseRepository.save(license);
 
         return new LicenseDto(validityDuration, calendar.getTime(), cryptoKey, project, customer);

@@ -1,9 +1,11 @@
 package teck.me.license.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Entity
 public class License {
@@ -12,25 +14,28 @@ public class License {
     @Id
     private long id;
 
+    @Size(min = 1)
     private int validityDuration;
 
     private Date takeEffectTime;
 
+    @Size(max = 36)
     private String uuid;
 
     private boolean updatable;
 
+    @Size(max = 255)
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cryptoKey_id")
     private CryptoKey cryptoKey;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
@@ -119,5 +124,18 @@ public class License {
 
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        License license = (License) o;
+        return id == license.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

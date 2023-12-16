@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface ProjectRepository extends JpaRepository<Project,Long> {
 
     Optional<CryptoKey> findByCryptoKeys_Uuid(String uuid);
+
+    boolean existsByName(String name);
 }

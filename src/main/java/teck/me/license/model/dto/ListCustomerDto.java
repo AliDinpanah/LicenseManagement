@@ -1,11 +1,9 @@
 package teck.me.license.model.dto;
 
 import teck.me.license.model.Customer;
-import teck.me.license.model.License;
 
-import java.util.List;
+public class ListCustomerDto {
 
-public class CustomerDto {
     private String name;
 
     private String email;
@@ -16,16 +14,13 @@ public class CustomerDto {
 
     private String address;
 
-    private List<License> licenses;
 
-
-    public CustomerDto(Customer customer) {
+    public ListCustomerDto(Customer customer) {
         this.name = customer.getName();
         this.description = customer.getDescription();
         this.address = customer.getAddress();
         this.email = customer.getEmail();
         this.phoneNumber = customer.getPhoneNumber();
-        this.licenses = customer.getLicenses();
     }
 
     public String getName() {
@@ -46,9 +41,5 @@ public class CustomerDto {
 
     public String getAddress() {
         return address;
-    }
-
-    public List<License> getLicenses() {
-        return licenses;
     }
 }

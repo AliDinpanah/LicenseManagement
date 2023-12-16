@@ -1,8 +1,11 @@
 package teck.me.license.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Customer {
@@ -12,14 +15,22 @@ public class Customer {
     private long id;
 
     @Column(name = "name", nullable = false)
+    @Size(max = 48)
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$\n")
     private String name;
 
+    @Size(max = 255)
+    private String description;
+
+    private String address;
+
+    @Email
     private String email;
 
-    @Pattern(regexp = "09/d{9}")
+    @Pattern(regexp = "^(?:\\+98|09)\\d{9}$\n")
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "customer")
     private List<License> licenses;
 
     public long getId() {
@@ -60,5 +71,34 @@ public class Customer {
 
     public void setLicenses(List<License> licenses) {
         this.licenses = licenses;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return id == customer.id && Objects.equals(name, customer.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

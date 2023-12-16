@@ -1,8 +1,11 @@
 package teck.me.license.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Project {
@@ -11,21 +14,25 @@ public class Project {
     @Id
     private long id;
 
+    @Column(name = "name", nullable = false)
+    @Size(max = 48)
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$\n")
     private String name;
 
+    @Size(max = 255)
     private String description;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
     private List<License> licenses;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
     private List<CryptoKey> cryptoKeys;
 
     @ElementCollection
     private List<String> parameters;
 
     public Project() {
-        parameters=new ArrayList<String>();
+        parameters = new ArrayList<String>();
     }
 
     public long getId() {
@@ -74,5 +81,18 @@ public class Project {
 
     public void setParameters(List<String> parameters) {
         this.parameters = parameters;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Project project = (Project) o;
+        return id == project.id && Objects.equals(name, project.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import teck.me.license.model.CryptoKey;
 import teck.me.license.model.dto.CryptoKeyDto;
+import teck.me.license.model.dto.ListCryptoKeyDto;
 import teck.me.license.service.CryptoKeyService;
 
 import java.util.List;
@@ -20,15 +21,23 @@ public class CryptoKeyController {
         this.cryptoKeyService = cryptoKeyService;
     }
 
+    @PutMapping
+    private ResponseEntity<CryptoKeyDto> createCryptoKey(@RequestBody CryptoKeyDto cryptoKeyDto) {
+        return new ResponseEntity<>(cryptoKeyService.createCryptoKey(cryptoKeyDto), HttpStatus.CREATED);
+    }
+
     @GetMapping
-    public ResponseEntity<List<CryptoKeyDto>> getAllCryptoKeys() {
-        List<CryptoKeyDto> cryptoKeys = cryptoKeyService.getAllCryptoKeys();
+    public ResponseEntity<List<ListCryptoKeyDto>> getAllCryptoKeys(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int number) {
+
+        List<ListCryptoKeyDto> cryptoKeys = cryptoKeyService.getAllCryptoKeys(page, number);
         return new ResponseEntity<>(cryptoKeys, HttpStatus.OK);
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<CryptoKeyDto> getCryptoKeyById(@PathVariable String uuid) {
-        CryptoKeyDto cryptoKey = cryptoKeyService.getCryptoKeyById(uuid);
+    public ResponseEntity<ListCryptoKeyDto> getCryptoKeyById(@PathVariable String uuid) {
+        ListCryptoKeyDto cryptoKey = cryptoKeyService.getCryptoKeyById(uuid);
         if (cryptoKey != null) {
             return new ResponseEntity<>(cryptoKey, HttpStatus.OK);
         } else {

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import teck.me.license.model.Project;
+import teck.me.license.model.dto.ListProjectDto;
 import teck.me.license.model.dto.ProjectDto;
 import teck.me.license.service.imp.ProjectServiceImp;
 
@@ -20,15 +21,23 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
+    @PostMapping
+    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto) {
+        ProjectDto projectDto1 = projectService.createProject(projectDto);
+        return new ResponseEntity<>(projectDto1, HttpStatus.CREATED);
+    }
+
     @GetMapping
-    public ResponseEntity<List<ProjectDto>> getAllProjects() {
-        List<ProjectDto> projects = projectService.getAllProjects();
+    public ResponseEntity<List<ListProjectDto>> getAllProjects(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int number) {
+        List<ListProjectDto> projects = projectService.getAllProjects(page, number);
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectDto> getProjectById(@PathVariable long id) {
-        ProjectDto project = projectService.getProjectById(id);
+    public ResponseEntity<ListProjectDto> getProjectById(@PathVariable long id) {
+        ListProjectDto project = projectService.getProjectById(id);
         if (project != null) {
             return new ResponseEntity<>(project, HttpStatus.OK);
         } else {

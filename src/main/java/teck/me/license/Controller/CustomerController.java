@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import teck.me.license.model.dto.CreateCustomerDto;
 import teck.me.license.model.dto.CustomerDto;
+import teck.me.license.model.dto.ListCustomerDto;
 import teck.me.license.service.imp.CustomerServiceImp;
 
 import java.util.List;
@@ -22,14 +22,16 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
-        List<CustomerDto> customers = customerService.getAllCustomers();
+    public ResponseEntity<List<ListCustomerDto>> getAllCustomers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int number) {
+        List<ListCustomerDto> customers = customerService.getAllCustomers(page,number);
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable long id) {
-        CustomerDto customer = customerService.getCustomerById(id);
+    public ResponseEntity<ListCustomerDto> getCustomerById(@PathVariable long id) {
+        ListCustomerDto customer = customerService.getCustomerById(id);
         if (customer != null) {
             return new ResponseEntity<>(customer, HttpStatus.OK);
         } else {
@@ -38,8 +40,8 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateCustomerDto> createCustomer(@RequestBody CreateCustomerDto customerDto) {
-        CreateCustomerDto createdCustomer = customerService.createCustomer(customerDto);
+    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) {
+        CustomerDto createdCustomer = customerService.createCustomer(customerDto);
         return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
     }
 
