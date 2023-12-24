@@ -3,6 +3,7 @@ package teck.me.license.service.imp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.CryptoKey;
 import teck.me.license.model.Customer;
 import teck.me.license.model.License;
@@ -39,9 +40,12 @@ public class LicenseServiceImp implements LicenseService {
 
 
     public LicenseDto getLicenseById(String uuid) {
-        License license = licenseRepository.findByUuid(uuid).get();
-        return new LicenseDto(license.getValidityDuration(), license.getTakeEffectTime(),
-                license.getCryptoKey(), license.getProject(), license.getCustomer());
+        if (licenseRepository.existsByUuid(uuid)) {
+            License license = licenseRepository.findByUuid(uuid).get();
+            return new LicenseDto(license.getValidityDuration(), license.getTakeEffectTime(),
+                    license.getCryptoKey(), license.getProject(), license.getCustomer());
+        }
+        throw new NotFoundException("No License with this id");
     }
 
     public LicenseDto saveLicense(LicenseDto licenseDto) {
@@ -57,18 +61,21 @@ public class LicenseServiceImp implements LicenseService {
     }
 
     public LicenseDto updateLicense(String uuid, LicenseDto updatedLicenseDto) {
-        License license = licenseRepository.findByUuid(uuid).get();
 
-        license.setParameters(updatedLicenseDto.getParameters());
-        license.setProject(updatedLicenseDto.getProject());
-        license.setCustomer(updatedLicenseDto.getCustomer());
-        license.setCryptoKey(updatedLicenseDto.getCryptoKey());
-        license.setTakeEffectTime(updatedLicenseDto.getTakeEffectTime());
-        license.setTakeEffectTime(updatedLicenseDto.getTakeEffectTime());
-        licenseRepository.save(license);
+        if (licenseRepository.existsByUuid(uuid)) {
+            License license = licenseRepository.findByUuid(uuid).get();
 
-        return updatedLicenseDto;
+            license.setParameters(updatedLicenseDto.getParameters());
+            license.setProject(updatedLicenseDto.getProject());
+            license.setCustomer(updatedLicenseDto.getCustomer());
+            license.setCryptoKey(updatedLicenseDto.getCryptoKey());
+            license.setTakeEffectTime(updatedLicenseDto.getTakeEffectTime());
+            license.setTakeEffectTime(updatedLicenseDto.getTakeEffectTime());
+            licenseRepository.save(license);
 
+            return updatedLicenseDto;
+        }
+        throw new NotFoundException("No License with this id");
     }
 
     public void deleteLicense(String uuid) {
@@ -107,24 +114,25 @@ public class LicenseServiceImp implements LicenseService {
         return new LicenseDto(validityDuration, calendar.getTime(), cryptoKey, project, customer);
     }
 
-    public LicenseDto parameterLimit(Long id, String projectParameter, String limitation) {
-        License license = licenseRepository.findById(id).get();
-        Project project = license.getProject();
-        Map<String, String> licenseParameter = license.getParameters();
+    public LicenseDto parameterLimit(String uuid, String projectParameter, String limitation) {
+        if (licenseRepository.existsByUuid(uuid)) {
+            License license = licenseRepository.findByUuid(uuid).get();
+            Project project = license.getProject();
+            Map<String, String> licenseParameter = license.getParameters();
 
 
-        for (String str : project.getParameters()) {
-            if (str.equals(projectParameter)) {
-                licenseParameter.put(str, limitation);
+            for (String str : project.getParameters()) {
+                if (str.equals(projectParameter)) {
 
-                license.setParameters(licenseParameter);
-                licenseRepository.save(license);
+                    license.getParameters().put(str, limitation);
+                    licenseRepository.save(license);
 
-                return new LicenseDto(licenseParameter);
+                    return new LicenseDto(licenseParameter);
+                }
             }
+            throw new NotFoundException("Project doesn't have this parameter");
         }
-
-        throw new NullPointerException();
+        throw new NotFoundException("No License with this id");
     }
 
 }

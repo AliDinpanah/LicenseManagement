@@ -25,18 +25,15 @@ public class CustomerController {
     public ResponseEntity<List<ListCustomerDto>> getAllCustomers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int number) {
-        List<ListCustomerDto> customers = customerService.getAllCustomers(page,number);
+        List<ListCustomerDto> customers = customerService.getAllCustomers(page, number);
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ListCustomerDto> getCustomerById(@PathVariable long id) {
         ListCustomerDto customer = customerService.getCustomerById(id);
-        if (customer != null) {
-            return new ResponseEntity<>(customer, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(customer, HttpStatus.OK);
+
     }
 
     @PostMapping
@@ -47,12 +44,8 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerDto> updateCustomer(@PathVariable long id, @RequestBody CustomerDto updatedCustomer) {
-        try {
-            CustomerDto customer = customerService.updateCustomer(id, updatedCustomer);
-            return new ResponseEntity<>(customer, HttpStatus.OK);
-        } catch (NullPointerException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        CustomerDto customer = customerService.updateCustomer(id, updatedCustomer);
+        return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

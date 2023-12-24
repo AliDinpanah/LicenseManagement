@@ -31,11 +31,8 @@ public class LicenseController {
     @GetMapping("/{uuid}")
     public ResponseEntity<LicenseDto> getLicenseById(@PathVariable String uuid) {
         LicenseDto license = licenseService.getLicenseById(uuid);
-        if (license != null) {
-            return new ResponseEntity<>(license, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(license, HttpStatus.OK);
+
     }
 
     @PostMapping
@@ -46,12 +43,9 @@ public class LicenseController {
 
     @PutMapping("/{uuid}")
     public ResponseEntity<LicenseDto> updateLicense(@PathVariable String uuid, @RequestBody LicenseDto updatedLicense) {
-        try {
-            LicenseDto license = licenseService.updateLicense(uuid, updatedLicense);
-            return new ResponseEntity<>(license, HttpStatus.OK);
-        } catch (NullPointerException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        LicenseDto license = licenseService.updateLicense(uuid, updatedLicense);
+        return new ResponseEntity<>(license, HttpStatus.OK);
+
     }
 
     @DeleteMapping("/{uuid}")
@@ -70,14 +64,12 @@ public class LicenseController {
     }
 
     @PostMapping("/parameter-limit/{id}")
-    public ResponseEntity<LicenseDto> parameterLimit(@PathVariable Long id,
+    public ResponseEntity<LicenseDto> parameterLimit(@PathVariable String uuid,
                                                      @RequestParam String projectParameter,
                                                      @RequestParam String limitation) {
-        try {
-            LicenseDto updatedLicense = licenseService.parameterLimit(id, projectParameter, limitation);
-            return new ResponseEntity<>(updatedLicense, HttpStatus.OK);
-        } catch (NullPointerException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+
+        LicenseDto updatedLicense = licenseService.parameterLimit(uuid, projectParameter, limitation);
+        return new ResponseEntity<>(updatedLicense, HttpStatus.OK);
+
     }
 }

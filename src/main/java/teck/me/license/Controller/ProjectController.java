@@ -38,27 +38,14 @@ public class ProjectController {
     @GetMapping("/{id}")
     public ResponseEntity<ListProjectDto> getProjectById(@PathVariable long id) {
         ListProjectDto project = projectService.getProjectById(id);
-        if (project != null) {
             return new ResponseEntity<>(project, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
     }
 
-    @PostMapping
-    public ResponseEntity<ProjectDto> saveProject(@RequestBody ProjectDto projectDto) {
-        ProjectDto savedProject = projectService.saveProject(projectDto);
-        return new ResponseEntity<>(savedProject, HttpStatus.CREATED);
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Project> updateProject(@PathVariable long id, @RequestBody ProjectDto updatedProject) {
-        try {
             Project project = projectService.updateProject(id, updatedProject);
             return new ResponseEntity<>(project, HttpStatus.OK);
-        } catch (NullPointerException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
     }
 
     @DeleteMapping("/{id}")

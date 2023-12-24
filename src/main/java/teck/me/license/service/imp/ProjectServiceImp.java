@@ -3,6 +3,8 @@ package teck.me.license.service.imp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import teck.me.license.exception.ConflictException;
+import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.CryptoKey;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +26,7 @@ public class ProjectServiceImp implements ProjectService {
         Project project = new Project();
         if (projectRepository.existsByName(projectDto.getName())) {
             //check unique name
-            throw new RuntimeException();
+            throw new ConflictException("Name already exist");
         }
         project.setDescription(projectDto.getDescription());
         project.setLicenses(projectDto.getLicenses());
@@ -50,8 +52,11 @@ public class ProjectServiceImp implements ProjectService {
 
 
     public ListProjectDto getProjectById(long id) {
+        if (projectRepository.existsById(id)){
         Project project = projectRepository.findById(id).get();
         return new ListProjectDto(project.getName(), project.getDescription(), project.getParameters());
+        }
+        throw new NotFoundException("No Project with this id");
     }
 
     public ProjectDto saveProject(ProjectDto projectDto) {
@@ -65,20 +70,23 @@ public class ProjectServiceImp implements ProjectService {
     }
 
     public Project updateProject(long id, ProjectDto updatedProjectDto) {
-        Project existingProject = projectRepository.findById(id).get();
 
-        if (projectRepository.existsByName(updatedProjectDto.getName())) {
-            //check unique name
-            throw new RuntimeException();
+        if (projectRepository.existsById(id)) {
+            Project existingProject = projectRepository.findById(id).get();
+
+            if (projectRepository.existsByName(updatedProjectDto.getName())) {
+                //check unique name
+                throw new ConflictException("Name already exist");
+            }
+
+            existingProject.setParameters(updatedProjectDto.getParameters());
+            existingProject.setParameters(updatedProjectDto.getParameters());
+            existingProject.setCryptoKeys(updatedProjectDto.getCryptoKeys());
+            existingProject.setName(updatedProjectDto.getName());
+
+            return projectRepository.save(existingProject);
         }
-
-        existingProject.setParameters(updatedProjectDto.getParameters());
-        existingProject.setParameters(updatedProjectDto.getParameters());
-        existingProject.setCryptoKeys(updatedProjectDto.getCryptoKeys());
-        existingProject.setName(updatedProjectDto.getName());
-
-        return projectRepository.save(existingProject);
-
+        throw new NotFoundException("No Project with this id");
     }
 
     public void deleteProject(long id) {
@@ -92,10 +100,6 @@ public class ProjectServiceImp implements ProjectService {
 
     public Project getProject(Long id) {
         return projectRepository.findById(id).get();
-    }
-
-    public void saveProject(Project project) {
-        projectRepository.save(project);
     }
 
 }

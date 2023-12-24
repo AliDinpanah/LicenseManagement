@@ -38,11 +38,7 @@ public class CryptoKeyController {
     @GetMapping("/{uuid}")
     public ResponseEntity<ListCryptoKeyDto> getCryptoKeyById(@PathVariable String uuid) {
         ListCryptoKeyDto cryptoKey = cryptoKeyService.getCryptoKeyById(uuid);
-        if (cryptoKey != null) {
             return new ResponseEntity<>(cryptoKey, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
     }
 
     @PostMapping
@@ -54,11 +50,7 @@ public class CryptoKeyController {
     @PutMapping("/{uuid}")
     public ResponseEntity<CryptoKey> updateCryptoKey(@PathVariable String uuid, @RequestBody CryptoKeyDto updatedCryptoKey) {
         CryptoKey updatedKey = cryptoKeyService.updateCryptoKey(uuid, updatedCryptoKey);
-        if (updatedKey != null) {
             return new ResponseEntity<>(updatedKey, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
     }
 
     @DeleteMapping("/{uuid}")

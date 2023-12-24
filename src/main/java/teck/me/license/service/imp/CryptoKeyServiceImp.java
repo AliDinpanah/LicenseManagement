@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.CryptoKey;
 import teck.me.license.model.dto.CryptoKeyDto;
 import teck.me.license.model.dto.ListCryptoKeyDto;
@@ -26,9 +27,9 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
         cryptoKey.setDescription(cryptoKeyDto.getDescription());
         cryptoKey.setLicenses(cryptoKeyDto.getLicenses());
 
-        while (true){
+        while (true) {
             cryptoKey.setUuid(UUID.randomUUID().toString());
-            if (!cryptoKeyRepository.existsByUuid(cryptoKey.getUuid())){
+            if (!cryptoKeyRepository.existsByUuid(cryptoKey.getUuid())) {
                 break;
             }
         }
@@ -49,9 +50,12 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
     }
 
     public ListCryptoKeyDto getCryptoKeyById(String uuid) {
-        CryptoKey cryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
-        ListCryptoKeyDto cryptoKeyDto = new ListCryptoKeyDto(cryptoKey.getDescription(), cryptoKey.getProject());
-        return cryptoKeyDto;
+        if (cryptoKeyRepository.existsByUuid(uuid)) {
+            CryptoKey cryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
+            ListCryptoKeyDto cryptoKeyDto = new ListCryptoKeyDto(cryptoKey.getDescription(), cryptoKey.getProject());
+            return cryptoKeyDto;
+        }
+        throw new NotFoundException("Oops no crypto key with this id");
     }
 
     public CryptoKeyDto saveCryptoKey(CryptoKeyDto cryptoKeyDto) {
@@ -70,13 +74,14 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
     }
 
     public CryptoKey updateCryptoKey(String uuid, CryptoKeyDto updatedCryptoKey) {
-        CryptoKey existingCryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
-        if (existingCryptoKey != null) {
+
+        if (cryptoKeyRepository.existsByUuid(uuid)) {
+            CryptoKey existingCryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
             // Update fields as needed
 
             return cryptoKeyRepository.save(existingCryptoKey);
         }
-        return null; // Handle not found scenario
+        throw new NotFoundException("Oops no crypto key with this id");
     }
 
     public void deleteCryptoKey(String uuid) {

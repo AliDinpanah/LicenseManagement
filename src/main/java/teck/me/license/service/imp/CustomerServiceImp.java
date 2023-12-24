@@ -3,6 +3,8 @@ package teck.me.license.service.imp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import teck.me.license.exception.ConflictException;
+import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.Customer;
 import teck.me.license.model.dto.CustomerDto;
 import teck.me.license.model.dto.ListCustomerDto;
@@ -34,14 +36,16 @@ public class CustomerServiceImp implements CustomerService {
 
 
     public ListCustomerDto getCustomerById(long id) {
-        return new ListCustomerDto(customerRepository.findById(id).get());
+        if (customerRepository.existsById(id)){
+        return new ListCustomerDto(customerRepository.findById(id).get());}
+        throw new NotFoundException("No Customer with this id");
     }
 
     public CustomerDto createCustomer(CustomerDto customerDto) {
         Customer customer = new Customer();
         if (customerRepository.existsByName(customerDto.getName())){
             //for unique name
-            throw new RuntimeException();
+            throw new ConflictException("Name already exist");
         }
         customer.setName(customerDto.getName());
         customer.setDescription(customerDto.getDescription());
@@ -55,12 +59,12 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     public CustomerDto updateCustomer(long id, CustomerDto updatedCustomer) {
-        Customer existingCustomer = customerRepository.findById(id).get();
-        if (existingCustomer != null) {
 
+        if (customerRepository.existsById(id)) {
+            Customer existingCustomer = customerRepository.findById(id).get();
             if (customerRepository.existsByName(updatedCustomer.getName())){
                 //for unique name
-                throw new RuntimeException();
+                throw new ConflictException("Name already exist");
             }
             existingCustomer.setName(updatedCustomer.getName());
             existingCustomer.setEmail(updatedCustomer.getEmail());
@@ -72,7 +76,7 @@ public class CustomerServiceImp implements CustomerService {
             customerRepository.save(existingCustomer);
             return updatedCustomer;
         }
-        throw new NullPointerException();
+        throw new NotFoundException("No Customer with this id");
     }
 
     public void deleteCustomer(long id) {

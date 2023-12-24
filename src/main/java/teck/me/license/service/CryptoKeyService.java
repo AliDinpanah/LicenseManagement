@@ -1,5 +1,6 @@
 package teck.me.license.service;
 
+import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.CryptoKey;
 import teck.me.license.model.dto.CryptoKeyDto;
 import teck.me.license.model.dto.ListCryptoKeyDto;
@@ -10,7 +11,7 @@ public interface CryptoKeyService {
 
     List<ListCryptoKeyDto> getAllCryptoKeys(int page, int number);
 
-    ListCryptoKeyDto getCryptoKeyById(String uuid);
+    ListCryptoKeyDto getCryptoKeyById(String uuid) throws NotFoundException;
 
     CryptoKeyDto saveCryptoKey(CryptoKeyDto cryptoKeyDto);
 

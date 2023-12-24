@@ -18,5 +18,5 @@ public interface LicenseService {
 
     LicenseDto createLicense(int validityDuration, String cryptoKeyId, Long projectId, Long customerId);
 
-    LicenseDto parameterLimit(Long id,String projectParameter,String limitation);
+    LicenseDto parameterLimit(String uuid,String projectParameter,String limitation);
 }
