@@ -93,4 +93,8 @@ public class LicenseDto {
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
     }
+
+    public String getDescription() {
+        return description;
+    }
 }

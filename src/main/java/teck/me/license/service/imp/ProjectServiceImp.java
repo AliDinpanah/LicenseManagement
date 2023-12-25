@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import teck.me.license.exception.ConflictException;
+import teck.me.license.exception.DataLogicException;
 import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.CryptoKey;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,12 @@ public class ProjectServiceImp implements ProjectService {
     private ProjectRepository projectRepository;
 
     public ProjectDto createProject(ProjectDto projectDto) {
+        if (projectDto.getDescription().length() > 255 || projectDto.getName().length() > 48) {
+            throw new DataLogicException("Not match");
+        }
+        if (!projectDto.getName().matches("^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$\n")) {
+            throw new DataLogicException("Not match");
+        }
         Project project = new Project();
         if (projectRepository.existsByName(projectDto.getName())) {
             //check unique name
@@ -52,9 +59,9 @@ public class ProjectServiceImp implements ProjectService {
 
 
     public ListProjectDto getProjectById(long id) {
-        if (projectRepository.existsById(id)){
-        Project project = projectRepository.findById(id).get();
-        return new ListProjectDto(project.getName(), project.getDescription(), project.getParameters());
+        if (projectRepository.existsById(id)) {
+            Project project = projectRepository.findById(id).get();
+            return new ListProjectDto(project.getName(), project.getDescription(), project.getParameters());
         }
         throw new NotFoundException("No Project with this id");
     }
@@ -71,6 +78,12 @@ public class ProjectServiceImp implements ProjectService {
 
     public Project updateProject(long id, ProjectDto updatedProjectDto) {
 
+        if (updatedProjectDto.getDescription().length() > 255 || updatedProjectDto.getName().length() > 48) {
+            throw new DataLogicException("Not match");
+        }
+        if (!updatedProjectDto.getName().matches("^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$\n")) {
+            throw new DataLogicException("Not match");
+        }
         if (projectRepository.existsById(id)) {
             Project existingProject = projectRepository.findById(id).get();
 

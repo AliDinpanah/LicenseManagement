@@ -19,4 +19,10 @@ public class GlobalExceptionHandler {
         ExceptionsPattern exceptionsPattern = new ExceptionsPattern(e.getMessage(), HttpStatus.CONFLICT);
         return new ResponseEntity<>(exceptionsPattern, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(value = {DataLogicException.class})
+    public ResponseEntity<Object> validationException(DataLogicException e) {
+        ExceptionsPattern exceptionsPattern = new ExceptionsPattern(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exceptionsPattern, HttpStatus.BAD_REQUEST);
+    }
 }

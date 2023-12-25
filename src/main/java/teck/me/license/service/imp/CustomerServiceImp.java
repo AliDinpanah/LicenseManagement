@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import teck.me.license.exception.ConflictException;
+import teck.me.license.exception.DataLogicException;
 import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.Customer;
 import teck.me.license.model.dto.CustomerDto;
@@ -36,19 +37,26 @@ public class CustomerServiceImp implements CustomerService {
 
 
     public ListCustomerDto getCustomerById(long id) {
-        if (customerRepository.existsById(id)){
-        return new ListCustomerDto(customerRepository.findById(id).get());}
+        if (customerRepository.existsById(id)) {
+            return new ListCustomerDto(customerRepository.findById(id).get());
+        }
         throw new NotFoundException("No Customer with this id");
     }
 
     public CustomerDto createCustomer(CustomerDto customerDto) {
         Customer customer = new Customer();
-        if (customerRepository.existsByName(customerDto.getName())){
+        if (customerDto.getName().length() > 48 || customerDto.getAddress().length() > 255) {
+            throw new DataLogicException("Not match");
+        }
+        if (!customerDto.getName().matches("^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$\n") ||
+                !customerDto.getPhoneNumber().matches("^(?:\\+98|09)\\d{9}$\n")) {
+            throw new DataLogicException("Not match");
+        }
+        if (customerRepository.existsByName(customerDto.getName())) {
             //for unique name
             throw new ConflictException("Name already exist");
         }
         customer.setName(customerDto.getName());
-        customer.setDescription(customerDto.getDescription());
         customer.setAddress(customerDto.getAddress());
         customer.setEmail(customerDto.getEmail());
         customer.setPhoneNumber(customerDto.getPhoneNumber());
@@ -62,15 +70,21 @@ public class CustomerServiceImp implements CustomerService {
 
         if (customerRepository.existsById(id)) {
             Customer existingCustomer = customerRepository.findById(id).get();
-            if (customerRepository.existsByName(updatedCustomer.getName())){
+            if (customerRepository.existsByName(updatedCustomer.getName())) {
                 //for unique name
                 throw new ConflictException("Name already exist");
+            }
+            if (updatedCustomer.getName().length() > 48 || updatedCustomer.getAddress().length() > 255) {
+                throw new DataLogicException("Not match");
+            }
+            if (!updatedCustomer.getName().matches("^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$\n") ||
+                    !updatedCustomer.getPhoneNumber().matches("^(?:\\+98|09)\\d{9}$\n")) {
+                throw new DataLogicException("Not match");
             }
             existingCustomer.setName(updatedCustomer.getName());
             existingCustomer.setEmail(updatedCustomer.getEmail());
             existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
             existingCustomer.setAddress(updatedCustomer.getAddress());
-            existingCustomer.setDescription(updatedCustomer.getDescription());
             existingCustomer.setLicenses(existingCustomer.getLicenses());
 
             customerRepository.save(existingCustomer);

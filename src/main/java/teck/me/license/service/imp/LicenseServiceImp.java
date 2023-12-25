@@ -3,6 +3,7 @@ package teck.me.license.service.imp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import teck.me.license.exception.DataLogicException;
 import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.CryptoKey;
 import teck.me.license.model.Customer;
@@ -61,6 +62,9 @@ public class LicenseServiceImp implements LicenseService {
     }
 
     public LicenseDto updateLicense(String uuid, LicenseDto updatedLicenseDto) {
+        if (updatedLicenseDto.getDescription().length() > 255) {
+            throw new DataLogicException("Not match");
+        }
 
         if (licenseRepository.existsByUuid(uuid)) {
             License license = licenseRepository.findByUuid(uuid).get();

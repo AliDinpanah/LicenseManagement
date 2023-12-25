@@ -11,9 +11,7 @@ public interface CryptoKeyService {
 
     List<ListCryptoKeyDto> getAllCryptoKeys(int page, int number);
 
-    ListCryptoKeyDto getCryptoKeyById(String uuid) throws NotFoundException;
-
-    CryptoKeyDto saveCryptoKey(CryptoKeyDto cryptoKeyDto);
+    ListCryptoKeyDto getCryptoKeyById(String uuid);
 
     void deleteCryptoKey(String uuid);
 

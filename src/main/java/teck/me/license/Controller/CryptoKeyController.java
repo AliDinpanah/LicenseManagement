@@ -21,7 +21,7 @@ public class CryptoKeyController {
         this.cryptoKeyService = cryptoKeyService;
     }
 
-    @PutMapping
+    @PostMapping
     private ResponseEntity<CryptoKeyDto> createCryptoKey(@RequestBody CryptoKeyDto cryptoKeyDto) {
         return new ResponseEntity<>(cryptoKeyService.createCryptoKey(cryptoKeyDto), HttpStatus.CREATED);
     }
@@ -39,12 +39,6 @@ public class CryptoKeyController {
     public ResponseEntity<ListCryptoKeyDto> getCryptoKeyById(@PathVariable String uuid) {
         ListCryptoKeyDto cryptoKey = cryptoKeyService.getCryptoKeyById(uuid);
             return new ResponseEntity<>(cryptoKey, HttpStatus.OK);
-    }
-
-    @PostMapping
-    public ResponseEntity<CryptoKeyDto> saveCryptoKey(@RequestBody CryptoKeyDto cryptoKeyDto) {
-        CryptoKeyDto savedCryptoKey = cryptoKeyService.saveCryptoKey(cryptoKeyDto);
-        return new ResponseEntity<>(savedCryptoKey, HttpStatus.CREATED);
     }
 
     @PutMapping("/{uuid}")

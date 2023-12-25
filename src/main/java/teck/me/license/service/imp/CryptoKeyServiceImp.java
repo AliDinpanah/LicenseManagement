@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import teck.me.license.exception.DataLogicException;
 import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.CryptoKey;
 import teck.me.license.model.dto.CryptoKeyDto;
@@ -22,6 +23,9 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
     private CryptoKeyRepository cryptoKeyRepository;
 
     public CryptoKeyDto createCryptoKey(CryptoKeyDto cryptoKeyDto) {
+        if (cryptoKeyDto.getDescription().length() > 255) {
+            throw new DataLogicException("Not match");
+        }
         CryptoKey cryptoKey = new CryptoKey();
         cryptoKey.setProject(cryptoKeyDto.getProject());
         cryptoKey.setDescription(cryptoKeyDto.getDescription());
@@ -58,23 +62,11 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
         throw new NotFoundException("Oops no crypto key with this id");
     }
 
-    public CryptoKeyDto saveCryptoKey(CryptoKeyDto cryptoKeyDto) {
-        CryptoKey cryptoKey = new CryptoKey();
-        while (true) {
-            cryptoKey.setUuid(UUID.randomUUID().toString());
-            if (!cryptoKeyRepository.existsByUuid(cryptoKey.getUuid())) {
-                break;
-            }
-        }
-        cryptoKey.setLicenses(cryptoKeyDto.getLicenses());
-        cryptoKey.setDescription(cryptoKeyDto.getDescription());
-        cryptoKey.setProject(cryptoKeyDto.getProject());
-        cryptoKeyRepository.save(cryptoKey);
-        return cryptoKeyDto;
-    }
-
     public CryptoKey updateCryptoKey(String uuid, CryptoKeyDto updatedCryptoKey) {
 
+        if (updatedCryptoKey.getDescription().length() > 255) {
+            throw new DataLogicException("Not match");
+        }
         if (cryptoKeyRepository.existsByUuid(uuid)) {
             CryptoKey existingCryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
             // Update fields as needed

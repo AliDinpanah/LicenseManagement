@@ -21,7 +21,6 @@ public class CustomerDto {
 
     public CustomerDto(Customer customer) {
         this.name = customer.getName();
-        this.description = customer.getDescription();
         this.address = customer.getAddress();
         this.email = customer.getEmail();
         this.phoneNumber = customer.getPhoneNumber();
