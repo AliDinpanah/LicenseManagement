@@ -1,5 +1,6 @@
 package teck.me.license.service;
 
+
 import teck.me.license.model.Project;
 import teck.me.license.model.dto.ListProjectDto;
 import teck.me.license.model.dto.ProjectDto;
@@ -10,14 +11,12 @@ public interface ProjectService {
 
     List<ListProjectDto> getAllProjects(int page, int number);
 
-    ListProjectDto getProjectById(long id);
+    ProjectDto getProjectById(String name) throws IllegalAccessException;
 
-    ProjectDto saveProject(ProjectDto projectDto);
+    Project updateProject(String name, ProjectDto updatedProjectDto) throws IllegalAccessException;
 
-    Project updateProject(long id, ProjectDto updatedProjectDto);
+    void deleteProject(String name);
 
-    void deleteProject(long id);
-
-    ProjectDto createProject(ProjectDto projectDto);
+    ProjectDto createProject(ProjectDto projectDto) throws IllegalAccessException;
 
 }

@@ -10,19 +10,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {NotFoundException.class})
     public ResponseEntity<Object> notFoundException(NotFoundException e) {
-        ExceptionsPattern exceptionsPattern = new ExceptionsPattern(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        ExceptionsPattern exceptionsPattern = new ExceptionsPattern(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,"Not Found code");
         return new ResponseEntity<>(exceptionsPattern, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = {ConflictException.class})
     public ResponseEntity<Object> conflictException(ConflictException e) {
-        ExceptionsPattern exceptionsPattern = new ExceptionsPattern(e.getMessage(), HttpStatus.CONFLICT);
+        ExceptionsPattern exceptionsPattern = new ExceptionsPattern(e.getMessage(), HttpStatus.CONFLICT,"Conflict code");
         return new ResponseEntity<>(exceptionsPattern, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = {DataLogicException.class})
     public ResponseEntity<Object> validationException(DataLogicException e) {
-        ExceptionsPattern exceptionsPattern = new ExceptionsPattern(e.getMessage(), HttpStatus.BAD_REQUEST);
+        ExceptionsPattern exceptionsPattern = new ExceptionsPattern(e.getMessage(), HttpStatus.BAD_REQUEST,"Validation code");
         return new ResponseEntity<>(exceptionsPattern, HttpStatus.BAD_REQUEST);
     }
 }

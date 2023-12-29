@@ -23,26 +23,26 @@ public class LicenseController {
     @GetMapping
     public ResponseEntity<List<LicenseDto>> getAllLicenses(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int number) {
+            @RequestParam(defaultValue = "10") int number) throws IllegalAccessException {
         List<LicenseDto> licenses = licenseService.getAllLicenses(page, number);
         return new ResponseEntity<>(licenses, HttpStatus.OK);
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<LicenseDto> getLicenseById(@PathVariable String uuid) {
+    public ResponseEntity<LicenseDto> getLicenseById(@PathVariable String uuid) throws IllegalAccessException {
         LicenseDto license = licenseService.getLicenseById(uuid);
         return new ResponseEntity<>(license, HttpStatus.OK);
 
     }
 
     @PostMapping
-    public ResponseEntity<LicenseDto> saveLicense(@RequestBody LicenseDto licenseDto) {
+    public ResponseEntity<LicenseDto> saveLicense(@RequestBody LicenseDto licenseDto) throws IllegalAccessException {
         LicenseDto savedLicense = licenseService.saveLicense(licenseDto);
         return new ResponseEntity<>(savedLicense, HttpStatus.CREATED);
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<LicenseDto> updateLicense(@PathVariable String uuid, @RequestBody LicenseDto updatedLicense) {
+    public ResponseEntity<LicenseDto> updateLicense(@PathVariable String uuid, @RequestBody LicenseDto updatedLicense) throws IllegalAccessException {
         LicenseDto license = licenseService.updateLicense(uuid, updatedLicense);
         return new ResponseEntity<>(license, HttpStatus.OK);
 
@@ -58,7 +58,7 @@ public class LicenseController {
     public ResponseEntity<LicenseDto> createLicense(@RequestParam int validityDuration,
                                                     @RequestParam String cryptoKeyId,
                                                     @RequestParam Long projectId,
-                                                    @RequestParam Long customerId) {
+                                                    @RequestParam Long customerId) throws IllegalAccessException {
         LicenseDto createdLicense = licenseService.createLicense(validityDuration, cryptoKeyId, projectId, customerId);
         return new ResponseEntity<>(createdLicense, HttpStatus.CREATED);
     }
@@ -66,7 +66,7 @@ public class LicenseController {
     @PostMapping("/parameter-limit/{id}")
     public ResponseEntity<LicenseDto> parameterLimit(@PathVariable String uuid,
                                                      @RequestParam String projectParameter,
-                                                     @RequestParam String limitation) {
+                                                     @RequestParam String limitation) throws IllegalAccessException {
 
         LicenseDto updatedLicense = licenseService.parameterLimit(uuid, projectParameter, limitation);
         return new ResponseEntity<>(updatedLicense, HttpStatus.OK);

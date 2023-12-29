@@ -22,7 +22,7 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto) {
+    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto) throws IllegalAccessException {
         ProjectDto projectDto1 = projectService.createProject(projectDto);
         return new ResponseEntity<>(projectDto1, HttpStatus.CREATED);
     }
@@ -36,21 +36,21 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ListProjectDto> getProjectById(@PathVariable long id) {
-        ListProjectDto project = projectService.getProjectById(id);
+    public ResponseEntity<ProjectDto> getProjectById(@PathVariable String name) throws IllegalAccessException {
+        ProjectDto project = projectService.getProjectById(name);
             return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable long id, @RequestBody ProjectDto updatedProject) {
-            Project project = projectService.updateProject(id, updatedProject);
+    public ResponseEntity<Project> updateProject(@PathVariable String name, @RequestBody ProjectDto updatedProject) throws IllegalAccessException {
+            Project project = projectService.updateProject(name, updatedProject);
             return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable long id) {
-        projectService.deleteProject(id);
+    public ResponseEntity<Void> deleteProject(@PathVariable String name) {
+        projectService.deleteProject(name);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

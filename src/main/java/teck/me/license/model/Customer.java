@@ -16,7 +16,7 @@ public class Customer {
 
     @Column(name = "name", nullable = false)
     @Size(max = 48)
-    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$\n")
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$")
     private String name;
 
     @Size(max = 255)
@@ -25,7 +25,7 @@ public class Customer {
     @Email
     private String email;
 
-    @Pattern(regexp = "^(?:\\+98|09)\\d{9}$\n")
+    @Pattern(regexp = "^(?:\\+98|09)\\d{9}$")
     private String phoneNumber;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "customer")

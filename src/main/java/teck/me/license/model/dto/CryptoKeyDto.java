@@ -3,43 +3,37 @@ package teck.me.license.model.dto;
 import teck.me.license.model.License;
 import teck.me.license.model.Project;
 
+import javax.validation.constraints.Size;
 import java.util.List;
 
 public class CryptoKeyDto {
 
+    @Size(max = 255)
     private String description;
 
-    private Project project;
+    private ProjectDto project;
 
-    private List<License> licenses;
+    private List<LicenseDto> licenses;
 
-    public CryptoKeyDto(String description, Project project, List<License> licenses) {
+    public CryptoKeyDto(String description, ProjectDto project, List<LicenseDto> licenses) {
         this.description = description;
         this.project = project;
         this.licenses = licenses;
+    }
+
+    public CryptoKeyDto() {
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Project getProject() {
+    public ProjectDto getProject() {
         return project;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public List<License> getLicenses() {
+    public List<LicenseDto> getLicenses() {
         return licenses;
     }
 
-    public void setLicenses(List<License> licenses) {
-        this.licenses = licenses;
-    }
 }

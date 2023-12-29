@@ -9,11 +9,15 @@ import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.CryptoKey;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import teck.me.license.model.License;
 import teck.me.license.model.Project;
+import teck.me.license.model.dto.CryptoKeyDto;
+import teck.me.license.model.dto.LicenseDto;
 import teck.me.license.model.dto.ListProjectDto;
 import teck.me.license.model.dto.ProjectDto;
 import teck.me.license.repository.ProjectRepository;
 import teck.me.license.service.ProjectService;
+import teck.me.license.utill.Converter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,23 +27,22 @@ public class ProjectServiceImp implements ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public ProjectDto createProject(ProjectDto projectDto) {
-        if (projectDto.getDescription().length() > 255 || projectDto.getName().length() > 48) {
-            throw new DataLogicException("Not match");
-        }
-        if (!projectDto.getName().matches("^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$\n")) {
-            throw new DataLogicException("Not match");
-        }
+    private Converter<CryptoKey, CryptoKeyDto> convertCryptoKeyToDto;
+    private Converter<CryptoKeyDto, CryptoKey> convertDtoToCryptoKey;
+    private Converter<License, LicenseDto> convertLicenseToDto;
+    private Converter<LicenseDto, License> convertDtoToLicense;
+
+    public ProjectDto createProject(ProjectDto projectDto) throws IllegalAccessException {
         Project project = new Project();
         if (projectRepository.existsByName(projectDto.getName())) {
             //check unique name
             throw new ConflictException("Name already exist");
         }
         project.setDescription(projectDto.getDescription());
-        project.setLicenses(projectDto.getLicenses());
-        project.setName(projectDto.getName());
-        project.setCryptoKeys(projectDto.getCryptoKeys());
         project.setParameters(projectDto.getParameters());
+        project.setCryptoKeys(convertDtoToCryptoKey.convertList(projectDto.getCryptoKeys(),new CryptoKey()));
+        project.setName(projectDto.getName());
+        project.setLicenses(convertDtoToLicense.convertList(projectDto.getLicenses(),new License()));
         projectRepository.save(project);
 
         return projectDto;
@@ -58,52 +61,37 @@ public class ProjectServiceImp implements ProjectService {
     }
 
 
-    public ListProjectDto getProjectById(long id) {
-        if (projectRepository.existsById(id)) {
-            Project project = projectRepository.findById(id).get();
-            return new ListProjectDto(project.getName(), project.getDescription(), project.getParameters());
+    public ProjectDto getProjectById(String name) throws IllegalAccessException {
+        if (projectRepository.existsByName(name)) {
+            Project project = projectRepository.findByName(name).get();
+            return new ProjectDto(project.getName(),project.getDescription(),convertLicenseToDto.convertList(project.getLicenses(),new LicenseDto()),convertCryptoKeyToDto.convertList(project.getCryptoKeys(),new CryptoKeyDto()),project.getParameters());
         }
         throw new NotFoundException("No Project with this id");
     }
 
-    public ProjectDto saveProject(ProjectDto projectDto) {
-        Project project = new Project();
-        project.setCryptoKeys(projectDto.getCryptoKeys());
-        project.setLicenses(projectDto.getLicenses());
-        project.setName(project.getName());
-        project.setDescription(projectDto.getDescription());
-        projectRepository.save(project);
-        return projectDto;
-    }
+    public Project updateProject(String name, ProjectDto updatedProjectDto) throws IllegalAccessException {
 
-    public Project updateProject(long id, ProjectDto updatedProjectDto) {
-
-        if (updatedProjectDto.getDescription().length() > 255 || updatedProjectDto.getName().length() > 48) {
-            throw new DataLogicException("Not match");
-        }
-        if (!updatedProjectDto.getName().matches("^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$\n")) {
-            throw new DataLogicException("Not match");
-        }
-        if (projectRepository.existsById(id)) {
-            Project existingProject = projectRepository.findById(id).get();
+        if (projectRepository.existsByName(name)) {
+            Project existingProject = projectRepository.findByName(name).get();
 
             if (projectRepository.existsByName(updatedProjectDto.getName())) {
                 //check unique name
                 throw new ConflictException("Name already exist");
             }
 
+            existingProject.setDescription(updatedProjectDto.getDescription());
             existingProject.setParameters(updatedProjectDto.getParameters());
-            existingProject.setParameters(updatedProjectDto.getParameters());
-            existingProject.setCryptoKeys(updatedProjectDto.getCryptoKeys());
+            existingProject.setCryptoKeys(convertDtoToCryptoKey.convertList(updatedProjectDto.getCryptoKeys(),new CryptoKey()));
             existingProject.setName(updatedProjectDto.getName());
+            existingProject.setLicenses(convertDtoToLicense.convertList(updatedProjectDto.getLicenses(),new License()));
 
             return projectRepository.save(existingProject);
         }
         throw new NotFoundException("No Project with this id");
     }
 
-    public void deleteProject(long id) {
-        projectRepository.deleteById(id);
+    public void deleteProject(String name) {
+        projectRepository.deleteByName(name);
     }
 
     //use in other services
@@ -114,5 +102,8 @@ public class ProjectServiceImp implements ProjectService {
     public Project getProject(Long id) {
         return projectRepository.findById(id).get();
     }
+
+
+
 
 }

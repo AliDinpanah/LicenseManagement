@@ -11,11 +11,11 @@ public interface CryptoKeyService {
 
     List<ListCryptoKeyDto> getAllCryptoKeys(int page, int number);
 
-    ListCryptoKeyDto getCryptoKeyById(String uuid);
+    CryptoKeyDto getCryptoKeyById(String uuid) throws IllegalAccessException;
 
     void deleteCryptoKey(String uuid);
 
     CryptoKey updateCryptoKey(String uuid, CryptoKeyDto updatedCryptoKey);
 
-    CryptoKeyDto createCryptoKey(CryptoKeyDto cryptoKeyDto);
+    CryptoKeyDto createCryptoKey(CryptoKeyDto cryptoKeyDto) throws IllegalAccessException;
 }

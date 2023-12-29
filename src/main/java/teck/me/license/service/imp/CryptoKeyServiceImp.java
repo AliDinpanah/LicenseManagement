@@ -7,11 +7,16 @@ import org.springframework.stereotype.Service;
 import teck.me.license.exception.DataLogicException;
 import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.CryptoKey;
+import teck.me.license.model.License;
+import teck.me.license.model.Project;
 import teck.me.license.model.dto.CryptoKeyDto;
+import teck.me.license.model.dto.LicenseDto;
 import teck.me.license.model.dto.ListCryptoKeyDto;
+import teck.me.license.model.dto.ProjectDto;
 import teck.me.license.repository.CryptoKeyRepository;
 import teck.me.license.service.CryptoKeyService;
 import org.springframework.data.domain.Pageable;
+import teck.me.license.utill.Converter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +27,17 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
     @Autowired
     private CryptoKeyRepository cryptoKeyRepository;
 
-    public CryptoKeyDto createCryptoKey(CryptoKeyDto cryptoKeyDto) {
-        if (cryptoKeyDto.getDescription().length() > 255) {
-            throw new DataLogicException("Not match");
-        }
+    private Converter<License, LicenseDto> convertLicenseToDto;
+    private Converter<LicenseDto, License> convertDtoToLicense;
+    private Converter<Project, ProjectDto> convertProjectToDto;
+    private Converter<ProjectDto, Project> convertDtoToProject;
+
+    public CryptoKeyDto createCryptoKey(CryptoKeyDto cryptoKeyDto) throws IllegalAccessException {
+
         CryptoKey cryptoKey = new CryptoKey();
-        cryptoKey.setProject(cryptoKeyDto.getProject());
+        cryptoKey.setProject(convertDtoToProject.convert(cryptoKeyDto.getProject(),new Project()));
         cryptoKey.setDescription(cryptoKeyDto.getDescription());
-        cryptoKey.setLicenses(cryptoKeyDto.getLicenses());
+        cryptoKey.setLicenses(convertDtoToLicense.convertList(cryptoKeyDto.getLicenses(),new License()));
 
         while (true) {
             cryptoKey.setUuid(UUID.randomUUID().toString());
@@ -53,10 +61,10 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
         return cryptoKeyDtos;
     }
 
-    public ListCryptoKeyDto getCryptoKeyById(String uuid) {
+    public CryptoKeyDto getCryptoKeyById(String uuid) throws IllegalAccessException {
         if (cryptoKeyRepository.existsByUuid(uuid)) {
             CryptoKey cryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
-            ListCryptoKeyDto cryptoKeyDto = new ListCryptoKeyDto(cryptoKey.getDescription(), cryptoKey.getProject());
+            CryptoKeyDto cryptoKeyDto = new CryptoKeyDto(cryptoKey.getDescription(), convertProjectToDto.convert(cryptoKey.getProject(),new ProjectDto()),convertLicenseToDto.convertList(cryptoKey.getLicenses(),new LicenseDto()));
             return cryptoKeyDto;
         }
         throw new NotFoundException("Oops no crypto key with this id");
@@ -64,9 +72,6 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
 
     public CryptoKey updateCryptoKey(String uuid, CryptoKeyDto updatedCryptoKey) {
 
-        if (updatedCryptoKey.getDescription().length() > 255) {
-            throw new DataLogicException("Not match");
-        }
         if (cryptoKeyRepository.existsByUuid(uuid)) {
             CryptoKey existingCryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
             // Update fields as needed

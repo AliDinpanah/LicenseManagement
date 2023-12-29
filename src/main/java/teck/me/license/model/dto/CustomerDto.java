@@ -3,28 +3,38 @@ package teck.me.license.model.dto;
 import teck.me.license.model.Customer;
 import teck.me.license.model.License;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 public class CustomerDto {
+
+    @Size(max = 48)
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$")
     private String name;
 
+    @Email
     private String email;
 
+    @Pattern(regexp = "^(?:\\+98|09)\\d{9}$")
     private String phoneNumber;
 
-    private String description;
-
+    @Size(max = 255)
     private String address;
 
-    private List<License> licenses;
+    private List<LicenseDto> licenses;
 
 
-    public CustomerDto(Customer customer) {
-        this.name = customer.getName();
-        this.address = customer.getAddress();
-        this.email = customer.getEmail();
-        this.phoneNumber = customer.getPhoneNumber();
-        this.licenses = customer.getLicenses();
+    public CustomerDto(String name, String email, String phoneNumber, String address, List<LicenseDto> licenses) {
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.licenses = licenses;
+    }
+
+    public CustomerDto() {
     }
 
     public String getName() {
@@ -39,15 +49,11 @@ public class CustomerDto {
         return phoneNumber;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public String getAddress() {
         return address;
     }
 
-    public List<License> getLicenses() {
+    public List<LicenseDto> getLicenses() {
         return licenses;
     }
 }

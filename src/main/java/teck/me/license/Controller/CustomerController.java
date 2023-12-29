@@ -30,27 +30,27 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ListCustomerDto> getCustomerById(@PathVariable long id) {
-        ListCustomerDto customer = customerService.getCustomerById(id);
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable String name) throws IllegalAccessException {
+        CustomerDto customer = customerService.getCustomerById(name);
         return new ResponseEntity<>(customer, HttpStatus.OK);
 
     }
 
     @PostMapping
-    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) {
+    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) throws IllegalAccessException {
         CustomerDto createdCustomer = customerService.createCustomer(customerDto);
         return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDto> updateCustomer(@PathVariable long id, @RequestBody CustomerDto updatedCustomer) {
-        CustomerDto customer = customerService.updateCustomer(id, updatedCustomer);
+    public ResponseEntity<CustomerDto> updateCustomer(@PathVariable String name, @RequestBody CustomerDto updatedCustomer) {
+        CustomerDto customer = customerService.updateCustomer(name, updatedCustomer);
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable long id) {
-        customerService.deleteCustomer(id);
+    public ResponseEntity<Void> deleteCustomer(@PathVariable String namee) {
+        customerService.deleteCustomer(namee);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

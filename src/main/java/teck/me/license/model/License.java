@@ -17,7 +17,7 @@ public class License {
     @Size(min = 1)
     private int validityDuration;
 
-    private Date takeEffectTime;
+    private Long takeEffectTime;
 
     @Size(max = 36)
     private String uuid;
@@ -42,6 +42,19 @@ public class License {
     @ElementCollection
     private Map<String, String> parameters;
 
+    public License(long id, int validityDuration, Long takeEffectTime, String uuid, boolean updatable, String description, CryptoKey cryptoKey, Project project, Customer customer, Map<String, String> parameters) {
+        this.id = id;
+        this.validityDuration = validityDuration;
+        this.takeEffectTime = takeEffectTime;
+        this.uuid = uuid;
+        this.updatable = updatable;
+        this.description = description;
+        this.cryptoKey = cryptoKey;
+        this.project = project;
+        this.customer = customer;
+        this.parameters = parameters;
+    }
+
     public License() {
         parameters = new HashMap<>();
     }
@@ -62,11 +75,11 @@ public class License {
         this.validityDuration = validityDuration;
     }
 
-    public Date getTakeEffectTime() {
+    public Long getTakeEffectTime() {
         return takeEffectTime;
     }
 
-    public void setTakeEffectTime(Date takeEffectTime) {
+    public void setTakeEffectTime(Long takeEffectTime) {
         this.takeEffectTime = takeEffectTime;
     }
 

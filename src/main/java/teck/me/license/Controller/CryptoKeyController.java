@@ -22,7 +22,7 @@ public class CryptoKeyController {
     }
 
     @PostMapping
-    private ResponseEntity<CryptoKeyDto> createCryptoKey(@RequestBody CryptoKeyDto cryptoKeyDto) {
+    private ResponseEntity<CryptoKeyDto> createCryptoKey(@RequestBody CryptoKeyDto cryptoKeyDto) throws IllegalAccessException {
         return new ResponseEntity<>(cryptoKeyService.createCryptoKey(cryptoKeyDto), HttpStatus.CREATED);
     }
 
@@ -36,8 +36,8 @@ public class CryptoKeyController {
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<ListCryptoKeyDto> getCryptoKeyById(@PathVariable String uuid) {
-        ListCryptoKeyDto cryptoKey = cryptoKeyService.getCryptoKeyById(uuid);
+    public ResponseEntity<CryptoKeyDto> getCryptoKeyById(@PathVariable String uuid) throws IllegalAccessException {
+        CryptoKeyDto cryptoKey = cryptoKeyService.getCryptoKeyById(uuid);
             return new ResponseEntity<>(cryptoKey, HttpStatus.OK);
     }
 

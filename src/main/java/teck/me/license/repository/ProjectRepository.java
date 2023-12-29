@@ -8,9 +8,13 @@ import teck.me.license.model.Project;
 import java.util.Optional;
 
 @Repository
-public interface ProjectRepository extends JpaRepository<Project,Long> {
+public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Optional<CryptoKey> findByCryptoKeys_Uuid(String uuid);
 
     boolean existsByName(String name);
+
+    Optional<Project> findByName(String name);
+
+    void deleteByName(String name);
 }

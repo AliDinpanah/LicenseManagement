@@ -16,7 +16,7 @@ public class Project {
 
     @Column(name = "name", nullable = false)
     @Size(max = 48)
-    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$\n")
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$")
     private String name;
 
     @Size(max = 255)

@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface CustomerService {
 
-    void deleteCustomer(long id);
+    void deleteCustomer(String name);
 
-    CustomerDto updateCustomer(long id, CustomerDto updatedCustomer);
+    CustomerDto updateCustomer(String name, CustomerDto updatedCustomer);
 
-    CustomerDto createCustomer(CustomerDto customerDto);
+    CustomerDto createCustomer(CustomerDto customerDto) throws IllegalAccessException;
 
-    ListCustomerDto getCustomerById(long id);
+    CustomerDto getCustomerById(String name) throws IllegalAccessException;
 
     List<ListCustomerDto> getAllCustomers(int page, int number);
 }

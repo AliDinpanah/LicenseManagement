@@ -2,6 +2,7 @@ package teck.me.license.model.dto;
 
 import teck.me.license.model.CryptoKey;
 import teck.me.license.model.License;
+import teck.me.license.model.Project;
 
 import java.util.List;
 
@@ -11,13 +12,13 @@ public class ProjectDto {
 
     private String description;
 
-    private List<License> licenses;
+    private List<LicenseDto> licenses;
 
-    private List<CryptoKey> cryptoKeys;
+    private List<CryptoKeyDto> cryptoKeys;
 
     private List<String> parameters;
 
-    public ProjectDto(String name, String description, List<License> licenses, List<CryptoKey> cryptoKeys, List<String> parameters) {
+    public ProjectDto(String name, String description, List<LicenseDto> licenses, List<CryptoKeyDto> cryptoKeys, List<String> parameters) {
         this.name = name;
         this.description = description;
         this.licenses = licenses;
@@ -25,37 +26,26 @@ public class ProjectDto {
         this.parameters = parameters;
     }
 
-    public String getName() {
-        return name;
+    public ProjectDto() {
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
-    public List<License> getLicenses() {
+    public List<LicenseDto> getLicenses() {
         return licenses;
     }
 
-    public void setLicenses(List<License> licenses) {
-        this.licenses = licenses;
-    }
-
-    public List<CryptoKey> getCryptoKeys() {
+    public List<CryptoKeyDto> getCryptoKeys() {
         return cryptoKeys;
     }
 
-    public void setCryptoKeys(List<CryptoKey> cryptoKeys) {
-        this.cryptoKeys = cryptoKeys;
-    }
 
     public List<String> getParameters() {
         return parameters;
