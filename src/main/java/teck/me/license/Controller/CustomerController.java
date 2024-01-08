@@ -1,7 +1,6 @@
 package teck.me.license.Controller;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,7 @@ import java.util.List;
 public class CustomerController {
     private final CustomerServiceImp customerService;
 
-    @Autowired
+
     public CustomerController(CustomerServiceImp customerService) {
         this.customerService = customerService;
     }
@@ -37,20 +36,20 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) throws IllegalAccessException {
-        CustomerDto createdCustomer = customerService.createCustomer(customerDto);
+    public ResponseEntity<ListCustomerDto> createCustomer(@RequestBody ListCustomerDto customerDto) throws IllegalAccessException {
+        ListCustomerDto createdCustomer = customerService.createCustomer(customerDto);
         return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDto> updateCustomer(@PathVariable String name, @RequestBody CustomerDto updatedCustomer) {
-        CustomerDto customer = customerService.updateCustomer(name, updatedCustomer);
+    public ResponseEntity<ListCustomerDto> updateCustomer(@PathVariable String name, @RequestBody ListCustomerDto updatedCustomer) {
+        ListCustomerDto customer = customerService.updateCustomer(name, updatedCustomer);
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable String namee) {
-        customerService.deleteCustomer(namee);
+    public ResponseEntity<Void> deleteCustomer(@PathVariable String name) {
+        customerService.deleteCustomer(name);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

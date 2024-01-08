@@ -2,14 +2,13 @@ package teck.me.license.model.dto;
 
 import teck.me.license.model.Customer;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
+
 
 public class ListCustomerDto {
 
     @Size(max = 48)
-    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$")
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-.]*$")
     private final String name;
 
     @Email

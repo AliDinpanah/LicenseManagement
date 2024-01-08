@@ -1,8 +1,5 @@
 package teck.me.license.model.dto;
 
-import teck.me.license.model.CryptoKey;
-import teck.me.license.model.License;
-import teck.me.license.model.Project;
 
 import java.util.List;
 

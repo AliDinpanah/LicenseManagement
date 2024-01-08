@@ -1,15 +1,13 @@
 package teck.me.license.model.dto;
 
 
-import teck.me.license.model.CryptoKey;
-import teck.me.license.model.Customer;
-import teck.me.license.model.License;
-import teck.me.license.model.Project;
 
+import javax.validation.constraints.*;
 import java.util.Map;
 
 public class LicenseDto {
 
+    @Size(min = 1)
     private int validityDuration;
 
     private Long takeEffectTime;
@@ -22,6 +20,7 @@ public class LicenseDto {
 
     private Map<String, String> parameters;
 
+    @Size(max = 255)
     private String description;
 
     public LicenseDto(int validityDuration, Long takeEffectTime, CryptoKeyDto cryptoKey, ProjectDto project, CustomerDto customer, Map<String, String> parameters, String description) {

@@ -1,10 +1,8 @@
 package teck.me.license.service.imp;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import teck.me.license.exception.DataLogicException;
 import teck.me.license.exception.NotFoundException;
 import teck.me.license.model.CryptoKey;
 import teck.me.license.model.License;
@@ -24,20 +22,23 @@ import java.util.UUID;
 
 @Service
 public class CryptoKeyServiceImp implements CryptoKeyService {
-    @Autowired
-    private CryptoKeyRepository cryptoKeyRepository;
+
+    private final CryptoKeyRepository cryptoKeyRepository;
 
     private Converter<License, LicenseDto> convertLicenseToDto;
     private Converter<LicenseDto, License> convertDtoToLicense;
     private Converter<Project, ProjectDto> convertProjectToDto;
     private Converter<ProjectDto, Project> convertDtoToProject;
 
-    public CryptoKeyDto createCryptoKey(CryptoKeyDto cryptoKeyDto) throws IllegalAccessException {
+    public CryptoKeyServiceImp(CryptoKeyRepository cryptoKeyRepository) {
+        this.cryptoKeyRepository = cryptoKeyRepository;
+    }
+
+    public ListCryptoKeyDto createCryptoKey(ListCryptoKeyDto cryptoKeyDto) throws IllegalAccessException {
 
         CryptoKey cryptoKey = new CryptoKey();
         cryptoKey.setProject(convertDtoToProject.convert(cryptoKeyDto.getProject(),new Project()));
         cryptoKey.setDescription(cryptoKeyDto.getDescription());
-        cryptoKey.setLicenses(convertDtoToLicense.convertList(cryptoKeyDto.getLicenses(),new License()));
 
         while (true) {
             cryptoKey.setUuid(UUID.randomUUID().toString());
@@ -49,13 +50,13 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
         return cryptoKeyDto;
     }
 
-    public List<ListCryptoKeyDto> getAllCryptoKeys(int page, int number) {
+    public List<ListCryptoKeyDto> getAllCryptoKeys(int page, int number) throws IllegalAccessException {
         Pageable pageable = PageRequest.of(page, number);
         Page<CryptoKey> cryptoKeyPage = cryptoKeyRepository.findAll(pageable);
         List<ListCryptoKeyDto> cryptoKeyDtos = new ArrayList<>();
 
         for (CryptoKey cryptoKey : cryptoKeyPage.getContent()) {
-            cryptoKeyDtos.add(new ListCryptoKeyDto(cryptoKey.getDescription(), cryptoKey.getProject()));
+            cryptoKeyDtos.add(new ListCryptoKeyDto(cryptoKey.getDescription(), convertProjectToDto.convert(cryptoKey.getProject(),new ProjectDto())));
         }
 
         return cryptoKeyDtos;
@@ -70,13 +71,15 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
         throw new NotFoundException("Oops no crypto key with this id");
     }
 
-    public CryptoKey updateCryptoKey(String uuid, CryptoKeyDto updatedCryptoKey) {
+    public ListCryptoKeyDto updateCryptoKey(String uuid, ListCryptoKeyDto updatedCryptoKey) throws IllegalAccessException {
 
         if (cryptoKeyRepository.existsByUuid(uuid)) {
             CryptoKey existingCryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
-            // Update fields as needed
+            existingCryptoKey.setDescription(updatedCryptoKey.getDescription());
+            existingCryptoKey.setProject(convertDtoToProject.convert(updatedCryptoKey.getProject(),new Project()));
 
-            return cryptoKeyRepository.save(existingCryptoKey);
+            cryptoKeyRepository.save(existingCryptoKey);
+            return updatedCryptoKey;
         }
         throw new NotFoundException("Oops no crypto key with this id");
     }

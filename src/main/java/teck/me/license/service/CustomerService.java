@@ -9,9 +9,9 @@ public interface CustomerService {
 
     void deleteCustomer(String name);
 
-    CustomerDto updateCustomer(String name, CustomerDto updatedCustomer);
+    ListCustomerDto updateCustomer(String name, ListCustomerDto updatedCustomer);
 
-    CustomerDto createCustomer(CustomerDto customerDto) throws IllegalAccessException;
+    ListCustomerDto createCustomer(ListCustomerDto customerDto) throws IllegalAccessException;
 
     CustomerDto getCustomerById(String name) throws IllegalAccessException;
 

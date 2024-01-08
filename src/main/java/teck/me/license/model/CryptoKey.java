@@ -1,6 +1,5 @@
 package teck.me.license.model;
 
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -20,7 +19,7 @@ public class CryptoKey {
     @Size(max = 255)
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "cryptoKey")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cryptoKey")
     private List<License> licenses;
 
     @ManyToOne(fetch = FetchType.LAZY)

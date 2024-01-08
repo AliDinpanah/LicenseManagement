@@ -2,7 +2,6 @@ package teck.me.license.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

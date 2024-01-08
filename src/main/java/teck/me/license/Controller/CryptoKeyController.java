@@ -1,10 +1,8 @@
 package teck.me.license.Controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import teck.me.license.model.CryptoKey;
 import teck.me.license.model.dto.CryptoKeyDto;
 import teck.me.license.model.dto.ListCryptoKeyDto;
 import teck.me.license.service.CryptoKeyService;
@@ -16,20 +14,19 @@ import java.util.List;
 public class CryptoKeyController {
     private final CryptoKeyService cryptoKeyService;
 
-    @Autowired
     public CryptoKeyController(CryptoKeyService cryptoKeyService) {
         this.cryptoKeyService = cryptoKeyService;
     }
 
     @PostMapping
-    private ResponseEntity<CryptoKeyDto> createCryptoKey(@RequestBody CryptoKeyDto cryptoKeyDto) throws IllegalAccessException {
+    private ResponseEntity<ListCryptoKeyDto> createCryptoKey(@RequestBody ListCryptoKeyDto cryptoKeyDto) throws IllegalAccessException {
         return new ResponseEntity<>(cryptoKeyService.createCryptoKey(cryptoKeyDto), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<ListCryptoKeyDto>> getAllCryptoKeys(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int number) {
+            @RequestParam(defaultValue = "10") int number) throws IllegalAccessException {
 
         List<ListCryptoKeyDto> cryptoKeys = cryptoKeyService.getAllCryptoKeys(page, number);
         return new ResponseEntity<>(cryptoKeys, HttpStatus.OK);
@@ -42,8 +39,8 @@ public class CryptoKeyController {
     }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<CryptoKey> updateCryptoKey(@PathVariable String uuid, @RequestBody CryptoKeyDto updatedCryptoKey) {
-        CryptoKey updatedKey = cryptoKeyService.updateCryptoKey(uuid, updatedCryptoKey);
+    public ResponseEntity<ListCryptoKeyDto> updateCryptoKey(@PathVariable String uuid, @RequestBody ListCryptoKeyDto updatedCryptoKey) throws IllegalAccessException {
+        ListCryptoKeyDto updatedKey = cryptoKeyService.updateCryptoKey(uuid, updatedCryptoKey);
             return new ResponseEntity<>(updatedKey, HttpStatus.OK);
     }
 

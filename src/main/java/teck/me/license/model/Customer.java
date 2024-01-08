@@ -16,7 +16,7 @@ public class Customer {
 
     @Column(name = "name", nullable = false)
     @Size(max = 48)
-    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-\\.]*$")
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_\\-.]*$")
     private String name;
 
     @Size(max = 255)

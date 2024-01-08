@@ -1,6 +1,5 @@
 package teck.me.license.service.imp;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import teck.me.license.exception.NotFoundException;
@@ -23,12 +22,12 @@ import java.util.*;
 
 @Service
 public class LicenseServiceImp implements LicenseService {
-    @Autowired
-    private LicenseRepository licenseRepository;
-    @Autowired
-    private ProjectServiceImp projectServiceImp;
-    @Autowired
-    private CustomerServiceImp customerServiceImp;
+
+    private final LicenseRepository licenseRepository;
+
+    private final ProjectServiceImp projectServiceImp;
+
+    private final CustomerServiceImp customerServiceImp;
 
     private Converter<Project, ProjectDto> convertProjectToDto;
     private Converter<ProjectDto, Project> convertDtoToProject;
@@ -36,6 +35,12 @@ public class LicenseServiceImp implements LicenseService {
     private Converter<CryptoKeyDto, CryptoKey> convertDtoToCryptoKey;
     private Converter<Customer, CustomerDto> convertCustomerToDto;
     private Converter<CustomerDto, Customer> convertDtoToCustomer;
+
+    public LicenseServiceImp(LicenseRepository licenseRepository, ProjectServiceImp projectServiceImp, CustomerServiceImp customerServiceImp) {
+        this.licenseRepository = licenseRepository;
+        this.projectServiceImp = projectServiceImp;
+        this.customerServiceImp = customerServiceImp;
+    }
 
     public List<LicenseDto> getAllLicenses(int page, int number) throws IllegalAccessException {
         Pageable pageable = PageRequest.of(page, number);

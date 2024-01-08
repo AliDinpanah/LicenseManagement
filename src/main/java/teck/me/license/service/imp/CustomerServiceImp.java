@@ -1,6 +1,5 @@
 package teck.me.license.service.imp;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import teck.me.license.exception.ConflictException;
@@ -22,11 +21,15 @@ import java.util.List;
 
 @Service
 public class CustomerServiceImp implements CustomerService {
-    @Autowired
-    private CustomerRepository customerRepository;
+
+    private final CustomerRepository customerRepository;
 
     private Converter<License, LicenseDto> convertLicenseToDto;
     private Converter<LicenseDto, License> convertDtoToLicense;
+
+    public CustomerServiceImp(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     public List<ListCustomerDto> getAllCustomers(int page, int number) {
         Pageable pageable = PageRequest.of(page, number);
@@ -49,7 +52,7 @@ public class CustomerServiceImp implements CustomerService {
         throw new NotFoundException("No Customer with this id");
     }
 
-    public CustomerDto createCustomer(CustomerDto customerDto) throws IllegalAccessException {
+    public ListCustomerDto createCustomer(ListCustomerDto customerDto) throws IllegalAccessException {
         Customer customer = new Customer();
         if (customerRepository.existsByName(customerDto.getName())) {
             //for unique name
@@ -59,14 +62,13 @@ public class CustomerServiceImp implements CustomerService {
         customer.setAddress(customerDto.getAddress());
         customer.setEmail(customerDto.getEmail());
         customer.setPhoneNumber(customerDto.getPhoneNumber());
-        customer.setLicenses(convertDtoToLicense.convertList(customerDto.getLicenses(),new License()));
 
         customerRepository.save(customer);
         return customerDto;
     }
 
 
-    public CustomerDto updateCustomer(String name, CustomerDto updatedCustomer) {
+    public ListCustomerDto updateCustomer(String name, ListCustomerDto updatedCustomer) {
 
         if (customerRepository.existsByName(name)) {
             Customer existingCustomer = customerRepository.findByName(name).get();
@@ -78,7 +80,6 @@ public class CustomerServiceImp implements CustomerService {
             existingCustomer.setEmail(updatedCustomer.getEmail());
             existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
             existingCustomer.setAddress(updatedCustomer.getAddress());
-            existingCustomer.setLicenses(existingCustomer.getLicenses());
 
             customerRepository.save(existingCustomer);
             return updatedCustomer;
