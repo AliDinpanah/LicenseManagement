@@ -7,16 +7,12 @@ import teck.me.license.model.CryptoKey;
 import teck.me.license.model.Customer;
 import teck.me.license.model.License;
 import teck.me.license.model.Project;
-import teck.me.license.model.dto.CryptoKeyDto;
-import teck.me.license.model.dto.CustomerDto;
-import teck.me.license.model.dto.LicenseDto;
-import teck.me.license.model.dto.ProjectDto;
+import teck.me.license.model.dto.*;
 import teck.me.license.repository.LicenseRepository;
 import teck.me.license.service.LicenseService;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import teck.me.license.utill.Converter;
 
 import java.util.*;
 
@@ -29,29 +25,23 @@ public class LicenseServiceImp implements LicenseService {
 
     private final CustomerServiceImp customerServiceImp;
 
-    private Converter<Project, ProjectDto> convertProjectToDto;
-    private Converter<ProjectDto, Project> convertDtoToProject;
-    private Converter<CryptoKey, CryptoKeyDto> convertCryptoKeyToDto;
-    private Converter<CryptoKeyDto, CryptoKey> convertDtoToCryptoKey;
-    private Converter<Customer, CustomerDto> convertCustomerToDto;
-    private Converter<CustomerDto, Customer> convertDtoToCustomer;
+    private final CryptoKeyServiceImp cryptoKeyServiceImp;
 
-    public LicenseServiceImp(LicenseRepository licenseRepository, ProjectServiceImp projectServiceImp, CustomerServiceImp customerServiceImp) {
+    public LicenseServiceImp(LicenseRepository licenseRepository, ProjectServiceImp projectServiceImp, CustomerServiceImp customerServiceImp, CryptoKeyServiceImp cryptoKeyServiceImp) {
         this.licenseRepository = licenseRepository;
         this.projectServiceImp = projectServiceImp;
         this.customerServiceImp = customerServiceImp;
+        this.cryptoKeyServiceImp = cryptoKeyServiceImp;
     }
 
-    public List<LicenseDto> getAllLicenses(int page, int number) throws IllegalAccessException {
+    public List<LicenseDto> getAllLicenses(int page, int number) {
         Pageable pageable = PageRequest.of(page, number);
         Page<License> licensePage = licenseRepository.findAll(pageable);
         List<LicenseDto> licenseDtos = new ArrayList<>();
 
         for (License license : licensePage.getContent()) {
             licenseDtos.add(new LicenseDto(license.getValidityDuration(), license.getTakeEffectTime(),
-                    convertCryptoKeyToDto.convert(license.getCryptoKey(), new CryptoKeyDto()),
-                    convertProjectToDto.convert(license.getProject(), new ProjectDto()),
-                    convertCustomerToDto.convert(license.getCustomer(), new CustomerDto()),
+                    license.getCryptoKey().getUuid(), license.getProject().getName(), license.getCustomer().getName(),
                     license.getParameters(), license.getDescription()));
         }
 
@@ -59,39 +49,37 @@ public class LicenseServiceImp implements LicenseService {
     }
 
 
-    public LicenseDto getLicenseById(String uuid) throws IllegalAccessException {
-        if (licenseRepository.existsByUuid(uuid)) {
+    public LicenseDto getLicenseById(String uuid) {
+        if (licenseRepository.findByUuid(uuid).isPresent()) {
             License license = licenseRepository.findByUuid(uuid).get();
             return new LicenseDto(license.getValidityDuration(), license.getTakeEffectTime(),
-                    convertCryptoKeyToDto.convert(license.getCryptoKey(), new CryptoKeyDto()),
-                    convertProjectToDto.convert(license.getProject(), new ProjectDto()),
-                    convertCustomerToDto.convert(license.getCustomer(), new CustomerDto()),
+                    license.getCryptoKey().getUuid(), license.getProject().getName(), license.getCustomer().getName(),
                     license.getParameters(), license.getDescription());
         }
         throw new NotFoundException("No License with this id");
     }
 
-    public LicenseDto saveLicense(LicenseDto licenseDto) throws IllegalAccessException {
-        License license = new License();
-        license.setParameters(licenseDto.getParameters());
-        license.setProject(convertDtoToProject.convert(licenseDto.getProject(),new Project()));
-        license.setCustomer(convertDtoToCustomer.convert(licenseDto.getCustomer(),new Customer()));
-        license.setCryptoKey(convertDtoToCryptoKey.convert(licenseDto.getCryptoKey(),new CryptoKey()));
-        license.setTakeEffectTime(licenseDto.getTakeEffectTime());
-        license.setTakeEffectTime(licenseDto.getTakeEffectTime());
-        licenseRepository.save(license);
-        return licenseDto;
-    }
+//    public CreateLicenseDto createLicense(CreateLicenseDto licenseDto) {
+//        License license = new License();
+//        license.setParameters(licenseDto.getParameters());
+//        license.setProject(projectServiceImp.getProject(licenseDto.getProjectName()));
+//        license.setCustomer(customerServiceImp.getCustomer(licenseDto.getCustomerName()));
+//        license.setCryptoKey(cryptoKeyServiceImp.getCryptoKey(licenseDto.getCryptoKeyUuid()));
+//        license.setTakeEffectTime(licenseDto.getTakeEffectTime());
+//        license.setTakeEffectTime(licenseDto.getTakeEffectTime());
+//        licenseRepository.save(license);
+//        return licenseDto;
+//    }
 
-    public LicenseDto updateLicense(String uuid, LicenseDto updatedLicenseDto) throws IllegalAccessException {
+    public CreateLicenseDto updateLicense(String uuid, CreateLicenseDto updatedLicenseDto) {
 
-        if (licenseRepository.existsByUuid(uuid)) {
+        if (licenseRepository.findByUuid(uuid).isPresent()) {
             License license = licenseRepository.findByUuid(uuid).get();
 
             license.setParameters(updatedLicenseDto.getParameters());
-            license.setProject(convertDtoToProject.convert(updatedLicenseDto.getProject(),new Project()));
-            license.setCustomer(convertDtoToCustomer.convert(updatedLicenseDto.getCustomer(),new Customer()));
-            license.setCryptoKey(convertDtoToCryptoKey.convert(updatedLicenseDto.getCryptoKey(),new CryptoKey()));
+            license.setProject(projectServiceImp.getProject(updatedLicenseDto.getProjectName()));
+            license.setCustomer(customerServiceImp.getCustomer(updatedLicenseDto.getCustomerName()));
+            license.setCryptoKey(cryptoKeyServiceImp.getCryptoKey(updatedLicenseDto.getCryptoKeyUuid()));
             license.setTakeEffectTime(updatedLicenseDto.getTakeEffectTime());
             license.setTakeEffectTime(updatedLicenseDto.getTakeEffectTime());
             licenseRepository.save(license);
@@ -105,10 +93,10 @@ public class LicenseServiceImp implements LicenseService {
         licenseRepository.deleteByUuid(uuid);
     }
 
-    public LicenseDto createLicense(int validityDuration, String cryptoKeyId, Long projectId, Long customerId) throws IllegalAccessException {
-        Project project = projectServiceImp.getProject(projectId);
+    public CreateLicenseDto createLicense(int validityDuration, String cryptoKeyId, String projectName, String customerName) {
+        Project project = projectServiceImp.getProject(projectName);
         CryptoKey cryptoKey = projectServiceImp.findKey(cryptoKeyId);
-        Customer customer = customerServiceImp.getCustomer(customerId);
+        Customer customer = customerServiceImp.getCustomer(customerName);
         License license = new License();
 
 
@@ -134,15 +122,13 @@ public class LicenseServiceImp implements LicenseService {
         }
         licenseRepository.save(license);
 
-        return new LicenseDto(license.getValidityDuration(), license.getTakeEffectTime(),
-                convertCryptoKeyToDto.convert(license.getCryptoKey(), new CryptoKeyDto()),
-                convertProjectToDto.convert(license.getProject(), new ProjectDto()),
-                convertCustomerToDto.convert(license.getCustomer(), new CustomerDto()),
+        return new CreateLicenseDto(license.getValidityDuration(), license.getTakeEffectTime(),
+                license.getCryptoKey().getUuid(), license.getProject().getName(), license.getCustomer().getName(),
                 license.getParameters(), license.getDescription());
     }
 
-    public LicenseDto parameterLimit(String uuid, String projectParameter, String limitation) throws IllegalAccessException {
-        if (licenseRepository.existsByUuid(uuid)) {
+    public LicenseDto parameterLimit(String uuid, String projectParameter, String limitation) {
+        if (licenseRepository.findByUuid(uuid).isPresent()) {
             License license = licenseRepository.findByUuid(uuid).get();
             Project project = license.getProject();
 
@@ -154,13 +140,19 @@ public class LicenseServiceImp implements LicenseService {
                     licenseRepository.save(license);
 
                     return new LicenseDto(license.getValidityDuration(), license.getTakeEffectTime(),
-                            convertCryptoKeyToDto.convert(license.getCryptoKey(), new CryptoKeyDto()),
-                            convertProjectToDto.convert(license.getProject(), new ProjectDto()),
-                            convertCustomerToDto.convert(license.getCustomer(), new CustomerDto()),
+                            license.getCryptoKey().getUuid(), license.getProject().getName(), license.getCustomer().getName(),
                             license.getParameters(), license.getDescription());
                 }
             }
             throw new NotFoundException("Project doesn't have this parameter");
+        }
+        throw new NotFoundException("No License with this id");
+    }
+
+    //use in other services
+    public License getLicense(String uuid) {
+        if (licenseRepository.findByUuid(uuid).isPresent()) {
+            return licenseRepository.findByUuid(uuid).get();
         }
         throw new NotFoundException("No License with this id");
     }

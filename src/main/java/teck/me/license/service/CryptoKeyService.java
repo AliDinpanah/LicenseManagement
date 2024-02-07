@@ -1,5 +1,6 @@
 package teck.me.license.service;
 
+import teck.me.license.model.dto.CreateCryptoKeyDto;
 import teck.me.license.model.dto.CryptoKeyDto;
 import teck.me.license.model.dto.ListCryptoKeyDto;
 
@@ -7,13 +8,13 @@ import java.util.List;
 
 public interface CryptoKeyService {
 
-    List<ListCryptoKeyDto> getAllCryptoKeys(int page, int number) throws IllegalAccessException;
+    List<ListCryptoKeyDto> getAllCryptoKeys(int page, int number);
 
-    CryptoKeyDto getCryptoKeyById(String uuid) throws IllegalAccessException;
+    CryptoKeyDto getCryptoKeyById(String uuid);
 
     void deleteCryptoKey(String uuid);
 
-    ListCryptoKeyDto updateCryptoKey(String uuid, ListCryptoKeyDto updatedCryptoKey) throws IllegalAccessException;
+    CreateCryptoKeyDto updateCryptoKey(String uuid, CreateCryptoKeyDto updatedCryptoKey);
 
-    ListCryptoKeyDto createCryptoKey(ListCryptoKeyDto cryptoKeyDto) throws IllegalAccessException;
+    CreateCryptoKeyDto createCryptoKey(CreateCryptoKeyDto cryptoKeyDto);
 }

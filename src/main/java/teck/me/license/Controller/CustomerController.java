@@ -4,6 +4,7 @@ package teck.me.license.Controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import teck.me.license.model.dto.CreateCustomerDto;
 import teck.me.license.model.dto.CustomerDto;
 import teck.me.license.model.dto.ListCustomerDto;
 import teck.me.license.service.imp.CustomerServiceImp;
@@ -29,21 +30,21 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable String name) throws IllegalAccessException {
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable String name) {
         CustomerDto customer = customerService.getCustomerById(name);
         return new ResponseEntity<>(customer, HttpStatus.OK);
 
     }
 
     @PostMapping
-    public ResponseEntity<ListCustomerDto> createCustomer(@RequestBody ListCustomerDto customerDto) throws IllegalAccessException {
-        ListCustomerDto createdCustomer = customerService.createCustomer(customerDto);
+    public ResponseEntity<CreateCustomerDto> createCustomer(@RequestBody CreateCustomerDto customerDto){
+        CreateCustomerDto createdCustomer = customerService.createCustomer(customerDto);
         return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ListCustomerDto> updateCustomer(@PathVariable String name, @RequestBody ListCustomerDto updatedCustomer) {
-        ListCustomerDto customer = customerService.updateCustomer(name, updatedCustomer);
+    public ResponseEntity<CreateCustomerDto> updateCustomer(@PathVariable String name, @RequestBody CreateCustomerDto updatedCustomer) {
+        CreateCustomerDto customer = customerService.updateCustomer(name, updatedCustomer);
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 

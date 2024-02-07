@@ -23,8 +23,5 @@ public class ListProjectDto {
         return description;
     }
 
-    public List<String> getParameters() {
-        return parameters;
-    }
 
 }

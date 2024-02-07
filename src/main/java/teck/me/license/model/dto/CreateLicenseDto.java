@@ -1,8 +1,11 @@
 package teck.me.license.model.dto;
 
+import javax.validation.constraints.*;
 import java.util.Map;
 
-public class LicenseDto {
+public class CreateLicenseDto {
+
+    @Size(min = 1)
     private final int validityDuration;
 
     private final Long takeEffectTime;
@@ -15,10 +18,10 @@ public class LicenseDto {
 
     private final Map<String, String> parameters;
 
+    @Size(max = 255)
     private final String description;
 
-
-    public LicenseDto(int validityDuration, Long takeEffectTime, String cryptoKeyUuid, String projectName, String customerName, Map<String, String> parameters, String description) {
+    public CreateLicenseDto(int validityDuration, Long takeEffectTime, String cryptoKeyUuid, String projectName, String customerName, Map<String, String> parameters, String description) {
         this.validityDuration = validityDuration;
         this.takeEffectTime = takeEffectTime;
         this.cryptoKeyUuid = cryptoKeyUuid;
@@ -26,14 +29,6 @@ public class LicenseDto {
         this.customerName = customerName;
         this.parameters = parameters;
         this.description = description;
-    }
-
-    public int getValidityDuration() {
-        return validityDuration;
-    }
-
-    public Long getTakeEffectTime() {
-        return takeEffectTime;
     }
 
     public String getCryptoKeyUuid() {
@@ -48,11 +43,20 @@ public class LicenseDto {
         return customerName;
     }
 
+    public Long getTakeEffectTime() {
+        return takeEffectTime;
+    }
+
+
     public Map<String, String> getParameters() {
         return parameters;
     }
 
     public String getDescription() {
         return description;
+    }
+
+    public int getValidityDuration() {
+        return validityDuration;
     }
 }

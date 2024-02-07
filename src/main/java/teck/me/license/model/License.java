@@ -21,8 +21,6 @@ public class License {
     @Size(max = 36)
     private String uuid;
 
-    private boolean updatable;
-
     @Size(max = 255)
     private String description;
 
@@ -41,12 +39,11 @@ public class License {
     @ElementCollection
     private Map<String, String> parameters;
 
-    public License(long id, int validityDuration, Long takeEffectTime, String uuid, boolean updatable, String description, CryptoKey cryptoKey, Project project, Customer customer, Map<String, String> parameters) {
+    public License(long id, int validityDuration, Long takeEffectTime, String uuid, String description, CryptoKey cryptoKey, Project project, Customer customer, Map<String, String> parameters) {
         this.id = id;
         this.validityDuration = validityDuration;
         this.takeEffectTime = takeEffectTime;
         this.uuid = uuid;
-        this.updatable = updatable;
         this.description = description;
         this.cryptoKey = cryptoKey;
         this.project = project;
@@ -88,14 +85,6 @@ public class License {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-
-    public boolean isUpdatable() {
-        return updatable;
-    }
-
-    public void setUpdatable(boolean updatable) {
-        this.updatable = updatable;
     }
 
     public String getDescription() {

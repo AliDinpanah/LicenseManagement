@@ -11,12 +11,12 @@ public interface ProjectService {
 
     List<ListProjectDto> getAllProjects(int page, int number);
 
-    ProjectDto getProjectById(String name) throws IllegalAccessException;
+    ProjectDto getProjectById(String name);
 
-    CreateProjectDto updateProject(String name, CreateProjectDto updatedProjectDto) throws IllegalAccessException;
+    CreateProjectDto updateProject(String name, CreateProjectDto updatedProjectDto);
 
     void deleteProject(String name);
 
-    CreateProjectDto createProject(CreateProjectDto projectDto) throws IllegalAccessException;
+    CreateProjectDto createProject(CreateProjectDto projectDto);
 
 }

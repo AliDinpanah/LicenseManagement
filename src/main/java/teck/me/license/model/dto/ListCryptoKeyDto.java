@@ -2,27 +2,23 @@ package teck.me.license.model.dto;
 
 
 
-import javax.validation.constraints.Size;
-
-
 public class ListCryptoKeyDto {
 
-    @Size(max = 255)
     private final String description;
 
-    private final ProjectDto project;
+    private final String projectName;
 
-    public ListCryptoKeyDto(String description, ProjectDto project) {
+    public ListCryptoKeyDto(String description, String projectName) {
         this.description = description;
-        this.project = project;
+        this.projectName = projectName;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public ProjectDto getProject() {
-        return project;
+    public String getProject() {
+        return projectName;
     }
 
 }

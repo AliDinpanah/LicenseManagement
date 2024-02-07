@@ -4,6 +4,7 @@ package teck.me.license.Controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import teck.me.license.model.dto.CreateLicenseDto;
 import teck.me.license.model.dto.LicenseDto;
 import teck.me.license.service.imp.LicenseServiceImp;
 
@@ -22,27 +23,27 @@ public class LicenseController {
     @GetMapping
     public ResponseEntity<List<LicenseDto>> getAllLicenses(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int number) throws IllegalAccessException {
+            @RequestParam(defaultValue = "10") int number) {
         List<LicenseDto> licenses = licenseService.getAllLicenses(page, number);
         return new ResponseEntity<>(licenses, HttpStatus.OK);
     }
 
     @GetMapping("/{uuid}")
-    public ResponseEntity<LicenseDto> getLicenseById(@PathVariable String uuid) throws IllegalAccessException {
+    public ResponseEntity<LicenseDto> getLicenseById(@PathVariable String uuid){
         LicenseDto license = licenseService.getLicenseById(uuid);
         return new ResponseEntity<>(license, HttpStatus.OK);
 
     }
 
-    @PostMapping
-    public ResponseEntity<LicenseDto> saveLicense(@RequestBody LicenseDto licenseDto) throws IllegalAccessException {
-        LicenseDto savedLicense = licenseService.saveLicense(licenseDto);
-        return new ResponseEntity<>(savedLicense, HttpStatus.CREATED);
-    }
+//    @PostMapping
+//    public ResponseEntity<CreateLicenseDto> saveLicense(@RequestBody CreateLicenseDto licenseDto){
+//        CreateLicenseDto savedLicense = licenseService.createLicense(licenseDto);
+//        return new ResponseEntity<>(savedLicense, HttpStatus.CREATED);
+//    }
 
     @PutMapping("/{uuid}")
-    public ResponseEntity<LicenseDto> updateLicense(@PathVariable String uuid, @RequestBody LicenseDto updatedLicense) throws IllegalAccessException {
-        LicenseDto license = licenseService.updateLicense(uuid, updatedLicense);
+    public ResponseEntity<CreateLicenseDto> updateLicense(@PathVariable String uuid, @RequestBody CreateLicenseDto updatedLicense){
+        CreateLicenseDto license = licenseService.updateLicense(uuid, updatedLicense);
         return new ResponseEntity<>(license, HttpStatus.OK);
 
     }
@@ -54,18 +55,18 @@ public class LicenseController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<LicenseDto> createLicense(@RequestParam int validityDuration,
-                                                    @RequestParam String cryptoKeyId,
-                                                    @RequestParam Long projectId,
-                                                    @RequestParam Long customerId) throws IllegalAccessException {
-        LicenseDto createdLicense = licenseService.createLicense(validityDuration, cryptoKeyId, projectId, customerId);
+    public ResponseEntity<CreateLicenseDto> createLicense(@RequestParam int validityDuration,
+                                                          @RequestParam String cryptoKeyId,
+                                                          @RequestParam String projectName,
+                                                          @RequestParam String customerName){
+        CreateLicenseDto createdLicense = licenseService.createLicense(validityDuration, cryptoKeyId, projectName, customerName);
         return new ResponseEntity<>(createdLicense, HttpStatus.CREATED);
     }
 
     @PostMapping("/parameter-limit/{id}")
     public ResponseEntity<LicenseDto> parameterLimit(@PathVariable String uuid,
-                                                     @RequestParam String projectParameter,
-                                                     @RequestParam String limitation) throws IllegalAccessException {
+                                                           @RequestParam String projectParameter,
+                                                           @RequestParam String limitation){
 
         LicenseDto updatedLicense = licenseService.parameterLimit(uuid, projectParameter, limitation);
         return new ResponseEntity<>(updatedLicense, HttpStatus.OK);

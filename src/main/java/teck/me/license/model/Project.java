@@ -32,7 +32,7 @@ public class Project {
     private List<String> parameters;
 
     public Project() {
-        parameters = new ArrayList<String>();
+        parameters = new ArrayList<>();
     }
 
     public long getId() {
@@ -61,10 +61,6 @@ public class Project {
 
     public List<License> getLicenses() {
         return licenses;
-    }
-
-    public void setLicenses(List<License> licenses) {
-        this.licenses = licenses;
     }
 
     public List<CryptoKey> getCryptoKeys() {

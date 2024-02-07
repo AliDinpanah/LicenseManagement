@@ -1,22 +1,26 @@
 package teck.me.license.service;
 
+import teck.me.license.model.License;
+import teck.me.license.model.dto.CreateLicenseDto;
 import teck.me.license.model.dto.LicenseDto;
 
 import java.util.List;
 
 public interface LicenseService {
 
-    List<LicenseDto> getAllLicenses(int page,int number) throws IllegalAccessException;
+    List<LicenseDto> getAllLicenses(int page, int number);
 
-    LicenseDto getLicenseById(String uuid) throws IllegalAccessException;
+    LicenseDto getLicenseById(String uuid);
 
-    LicenseDto saveLicense(LicenseDto licenseDto) throws IllegalAccessException;
+//    CreateLicenseDto createLicense(CreateLicenseDto licenseDto);
 
-    LicenseDto updateLicense(String uuid,LicenseDto updatedLicenseDto) throws IllegalAccessException;
+    CreateLicenseDto updateLicense(String uuid, CreateLicenseDto updatedLicenseDto);
 
     void deleteLicense(String uuid);
 
-    LicenseDto createLicense(int validityDuration, String cryptoKeyId, Long projectId, Long customerId) throws IllegalAccessException;
+    CreateLicenseDto createLicense(int validityDuration, String cryptoKeyId, String projectName, String customerName);
 
-    LicenseDto parameterLimit(String uuid,String projectParameter,String limitation) throws IllegalAccessException;
+    LicenseDto parameterLimit(String uuid, String projectParameter, String limitation);
+
+    License getLicense(String uuid);
 }

@@ -15,13 +15,13 @@ public class CreateProjectDto {
 
     private final List<String> parameters;
 
-    private final List<CryptoKeyDto> cryptoKeys;
+    private final List<String> cryptoKeysId;
 
-    public CreateProjectDto(String name, String description, List<String> parameters, List<CryptoKeyDto> cryptoKeys) {
+    public CreateProjectDto(String name, String description, List<String> parameters, List<String> cryptoKeysId) {
         this.name = name;
         this.description = description;
         this.parameters = parameters;
-        this.cryptoKeys = cryptoKeys;
+        this.cryptoKeysId = cryptoKeysId;
     }
 
     public String getName() {
@@ -36,7 +36,7 @@ public class CreateProjectDto {
         return parameters;
     }
 
-    public List<CryptoKeyDto> getCryptoKeys() {
-        return cryptoKeys;
+    public List<String> getCryptoKeysId() {
+        return cryptoKeysId;
     }
 }

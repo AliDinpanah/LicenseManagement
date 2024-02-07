@@ -1,5 +1,6 @@
 package teck.me.license.service;
 
+import teck.me.license.model.dto.CreateCustomerDto;
 import teck.me.license.model.dto.CustomerDto;
 import teck.me.license.model.dto.ListCustomerDto;
 
@@ -9,9 +10,9 @@ public interface CustomerService {
 
     void deleteCustomer(String name);
 
-    ListCustomerDto updateCustomer(String name, ListCustomerDto updatedCustomer);
+    CreateCustomerDto updateCustomer(String name, CreateCustomerDto updatedCustomer);
 
-    ListCustomerDto createCustomer(ListCustomerDto customerDto) throws IllegalAccessException;
+    CreateCustomerDto createCustomer(CreateCustomerDto customerDto);
 
     CustomerDto getCustomerById(String name) throws IllegalAccessException;
 

@@ -5,25 +5,22 @@ import java.util.List;
 
 public class ProjectDto {
 
-    private String name;
+    private final String name;
 
-    private String description;
+    private final String description;
 
-    private List<LicenseDto> licenses;
+    private final List<String> licensesId;
 
-    private List<CryptoKeyDto> cryptoKeys;
+    private final List<String> cryptoKeysId;
 
-    private List<String> parameters;
+    private final List<String> parameters;
 
-    public ProjectDto(String name, String description, List<LicenseDto> licenses, List<CryptoKeyDto> cryptoKeys, List<String> parameters) {
+    public ProjectDto(String name, String description, List<String> licensesId, List<String> cryptoKeysId, List<String> parameters) {
         this.name = name;
         this.description = description;
-        this.licenses = licenses;
-        this.cryptoKeys = cryptoKeys;
+        this.licensesId = licensesId;
+        this.cryptoKeysId = cryptoKeysId;
         this.parameters = parameters;
-    }
-
-    public ProjectDto() {
     }
 
     public String getName() {
@@ -34,15 +31,13 @@ public class ProjectDto {
         return description;
     }
 
-
-    public List<LicenseDto> getLicenses() {
-        return licenses;
+    public List<String> getLicensesId() {
+        return licensesId;
     }
 
-    public List<CryptoKeyDto> getCryptoKeys() {
-        return cryptoKeys;
+    public List<String> getCryptoKeysId() {
+        return cryptoKeysId;
     }
-
 
     public List<String> getParameters() {
         return parameters;
