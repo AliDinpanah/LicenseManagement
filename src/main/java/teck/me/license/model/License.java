@@ -1,6 +1,7 @@
 package teck.me.license.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +14,8 @@ public class License {
     @Id
     private long id;
 
-    @Size(min = 1)
-    private int validityDuration;
+    @Min(1)
+    private Integer validityDuration;
 
     private Long takeEffectTime;
 

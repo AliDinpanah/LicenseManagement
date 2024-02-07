@@ -1,5 +1,6 @@
 package teck.me.license.service.imp;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import teck.me.license.exception.ConflictException;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import teck.me.license.service.CustomerService;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class CustomerServiceImp implements CustomerService {
     private final CustomerRepository customerRepository;
     private final LicenseServiceImp licenseServiceImp;
 
-    public CustomerServiceImp(CustomerRepository customerRepository, LicenseServiceImp licenseServiceImp) {
+    public CustomerServiceImp(CustomerRepository customerRepository, @Lazy LicenseServiceImp licenseServiceImp) {
         this.customerRepository = customerRepository;
         this.licenseServiceImp = licenseServiceImp;
     }
@@ -44,12 +46,12 @@ public class CustomerServiceImp implements CustomerService {
 
     public CustomerDto getCustomerById(String name) {
         if (customerRepository.findByName(name).isPresent()) {
-            Customer customer=customerRepository.findByName(name).get();
-            List<String> licenseId=new ArrayList<>();
-            for (int i=0;i<customer.getLicenses().size();i++){
+            Customer customer = customerRepository.findByName(name).get();
+            List<String> licenseId = new ArrayList<>();
+            for (int i = 0; i < customer.getLicenses().size(); i++) {
                 licenseId.add(customer.getLicenses().get(i).getUuid());
             }
-            return new CustomerDto(customer.getName(),customer.getEmail(),customer.getPhoneNumber(),customer.getAddress(), licenseId);
+            return new CustomerDto(customer.getName(), customer.getEmail(), customer.getPhoneNumber(), customer.getAddress(), licenseId);
         }
         throw new NotFoundException("No Customer with this id");
     }
@@ -82,11 +84,13 @@ public class CustomerServiceImp implements CustomerService {
             existingCustomer.setEmail(updatedCustomer.getEmail());
             existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
             existingCustomer.setAddress(updatedCustomer.getAddress());
-            List<License> licenses=new ArrayList<>();
-            for (int i=0;i<updatedCustomer.getLicensesId().size();i++){
-                licenses.add(licenseServiceImp.getLicense(updatedCustomer.getLicensesId().get(i)));
+            List<License> licenses = new ArrayList<>();
+            if (updatedCustomer.getLicensesId() != null) {
+                for (int i = 0; i < updatedCustomer.getLicensesId().size(); i++) {
+                    licenses.add(licenseServiceImp.getLicense(updatedCustomer.getLicensesId().get(i)));
+                }
+                existingCustomer.setLicenses(licenses);
             }
-            existingCustomer.setLicenses(licenses);
 
             customerRepository.save(existingCustomer);
             return updatedCustomer;
@@ -94,6 +98,7 @@ public class CustomerServiceImp implements CustomerService {
         throw new NotFoundException("No Customer with this id");
     }
 
+    @Transactional
     public void deleteCustomer(String name) {
         customerRepository.deleteByName(name);
     }

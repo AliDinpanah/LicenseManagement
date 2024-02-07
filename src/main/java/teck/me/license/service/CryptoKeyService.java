@@ -1,5 +1,6 @@
 package teck.me.license.service;
 
+import teck.me.license.model.CryptoKey;
 import teck.me.license.model.dto.CreateCryptoKeyDto;
 import teck.me.license.model.dto.CryptoKeyDto;
 import teck.me.license.model.dto.ListCryptoKeyDto;
@@ -17,4 +18,6 @@ public interface CryptoKeyService {
     CreateCryptoKeyDto updateCryptoKey(String uuid, CreateCryptoKeyDto updatedCryptoKey);
 
     CreateCryptoKeyDto createCryptoKey(CreateCryptoKeyDto cryptoKeyDto);
+
+    void saveCryptoKey(CryptoKey cryptoKey);
 }

@@ -5,8 +5,8 @@ import java.util.Map;
 
 public class CreateLicenseDto {
 
-    @Size(min = 1)
-    private final int validityDuration;
+    @Min(1)
+    private final Integer validityDuration;
 
     private final Long takeEffectTime;
 

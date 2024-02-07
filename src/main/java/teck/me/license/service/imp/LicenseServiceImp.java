@@ -1,5 +1,6 @@
 package teck.me.license.service.imp;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import teck.me.license.exception.NotFoundException;
@@ -14,6 +15,7 @@ import teck.me.license.service.LicenseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -27,7 +29,7 @@ public class LicenseServiceImp implements LicenseService {
 
     private final CryptoKeyServiceImp cryptoKeyServiceImp;
 
-    public LicenseServiceImp(LicenseRepository licenseRepository, ProjectServiceImp projectServiceImp, CustomerServiceImp customerServiceImp, CryptoKeyServiceImp cryptoKeyServiceImp) {
+    public LicenseServiceImp(LicenseRepository licenseRepository, ProjectServiceImp projectServiceImp, CustomerServiceImp customerServiceImp,@Lazy CryptoKeyServiceImp cryptoKeyServiceImp) {
         this.licenseRepository = licenseRepository;
         this.projectServiceImp = projectServiceImp;
         this.customerServiceImp = customerServiceImp;
@@ -59,18 +61,6 @@ public class LicenseServiceImp implements LicenseService {
         throw new NotFoundException("No License with this id");
     }
 
-//    public CreateLicenseDto createLicense(CreateLicenseDto licenseDto) {
-//        License license = new License();
-//        license.setParameters(licenseDto.getParameters());
-//        license.setProject(projectServiceImp.getProject(licenseDto.getProjectName()));
-//        license.setCustomer(customerServiceImp.getCustomer(licenseDto.getCustomerName()));
-//        license.setCryptoKey(cryptoKeyServiceImp.getCryptoKey(licenseDto.getCryptoKeyUuid()));
-//        license.setTakeEffectTime(licenseDto.getTakeEffectTime());
-//        license.setTakeEffectTime(licenseDto.getTakeEffectTime());
-//        licenseRepository.save(license);
-//        return licenseDto;
-//    }
-
     public CreateLicenseDto updateLicense(String uuid, CreateLicenseDto updatedLicenseDto) {
 
         if (licenseRepository.findByUuid(uuid).isPresent()) {
@@ -89,18 +79,36 @@ public class LicenseServiceImp implements LicenseService {
         throw new NotFoundException("No License with this id");
     }
 
+    @Transactional
     public void deleteLicense(String uuid) {
         licenseRepository.deleteByUuid(uuid);
     }
 
-    public CreateLicenseDto createLicense(int validityDuration, String cryptoKeyId, String projectName, String customerName) {
+
+    public CreateLicenseDto createLicense(CreateLicenseDto licenseDto, String cryptoKeyId, String projectName, String customerName) {
         Project project = projectServiceImp.getProject(projectName);
-        CryptoKey cryptoKey = projectServiceImp.findKey(cryptoKeyId);
+        CryptoKey cryptoKey;
+
+        Optional<CryptoKey> optionalCryptoKey = project.getCryptoKeys().stream()
+                .filter(key -> key.getUuid().equals(cryptoKeyId))
+                .findFirst();
+
+        if (optionalCryptoKey.isPresent()) {
+            cryptoKey = optionalCryptoKey.get();
+        } else {
+            //default crypto key
+            cryptoKey = new CryptoKey();
+            cryptoKey.setProject(project);
+            cryptoKey.setDescription("description");
+            cryptoKey.setUuid("112233");
+            cryptoKeyServiceImp.saveCryptoKey(cryptoKey);
+        }
+
         Customer customer = customerServiceImp.getCustomer(customerName);
         License license = new License();
 
 
-        license.setValidityDuration(validityDuration);
+        license.setValidityDuration(licenseDto.getValidityDuration());
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR, 3);
         calendar.set(Calendar.MINUTE, 30);
@@ -113,18 +121,19 @@ public class LicenseServiceImp implements LicenseService {
         license.setCryptoKey(cryptoKey);
         license.setCustomer(customer);
         license.setProject(project);
+        license.setDescription(licenseDto.getDescription());
 
         while (true) {
             license.setUuid(UUID.randomUUID().toString());
             if (!licenseRepository.existsByUuid(license.getUuid())) {
+                System.out.println("License: " + license.getUuid());
                 break;
             }
         }
         licenseRepository.save(license);
-
         return new CreateLicenseDto(license.getValidityDuration(), license.getTakeEffectTime(),
                 license.getCryptoKey().getUuid(), license.getProject().getName(), license.getCustomer().getName(),
-                license.getParameters(), license.getDescription());
+                new HashMap<>(), license.getDescription());
     }
 
     public LicenseDto parameterLimit(String uuid, String projectParameter, String limitation) {

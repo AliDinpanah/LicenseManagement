@@ -35,11 +35,6 @@ public class LicenseController {
 
     }
 
-//    @PostMapping
-//    public ResponseEntity<CreateLicenseDto> saveLicense(@RequestBody CreateLicenseDto licenseDto){
-//        CreateLicenseDto savedLicense = licenseService.createLicense(licenseDto);
-//        return new ResponseEntity<>(savedLicense, HttpStatus.CREATED);
-//    }
 
     @PutMapping("/{uuid}")
     public ResponseEntity<CreateLicenseDto> updateLicense(@PathVariable String uuid, @RequestBody CreateLicenseDto updatedLicense){
@@ -54,16 +49,16 @@ public class LicenseController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<CreateLicenseDto> createLicense(@RequestParam int validityDuration,
+    @PostMapping
+    public ResponseEntity<CreateLicenseDto> createLicense(@RequestBody CreateLicenseDto licenseDto,
                                                           @RequestParam String cryptoKeyId,
                                                           @RequestParam String projectName,
                                                           @RequestParam String customerName){
-        CreateLicenseDto createdLicense = licenseService.createLicense(validityDuration, cryptoKeyId, projectName, customerName);
+        CreateLicenseDto createdLicense = licenseService.createLicense(licenseDto, cryptoKeyId, projectName, customerName);
         return new ResponseEntity<>(createdLicense, HttpStatus.CREATED);
     }
 
-    @PostMapping("/parameter-limit/{id}")
+    @PostMapping("/parameter-limit/{uuid}")
     public ResponseEntity<LicenseDto> parameterLimit(@PathVariable String uuid,
                                                            @RequestParam String projectParameter,
                                                            @RequestParam String limitation){

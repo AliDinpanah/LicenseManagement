@@ -1,5 +1,6 @@
 package teck.me.license.service.imp;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import teck.me.license.repository.CryptoKeyRepository;
 import teck.me.license.service.CryptoKeyService;
 import org.springframework.data.domain.Pageable;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +25,7 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
     private final LicenseServiceImp licenseServiceImp;
 
 
-    public CryptoKeyServiceImp(CryptoKeyRepository cryptoKeyRepository, ProjectServiceImp projectServiceImp, LicenseServiceImp licenseServiceImp) {
+    public CryptoKeyServiceImp(CryptoKeyRepository cryptoKeyRepository, ProjectServiceImp projectServiceImp, @Lazy LicenseServiceImp licenseServiceImp) {
         this.cryptoKeyRepository = cryptoKeyRepository;
         this.projectServiceImp = projectServiceImp;
         this.licenseServiceImp = licenseServiceImp;
@@ -38,6 +40,7 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
         while (true) {
             cryptoKey.setUuid(UUID.randomUUID().toString());
             if (!cryptoKeyRepository.existsByUuid(cryptoKey.getUuid())) {
+                System.out.println(cryptoKey.getUuid());
                 break;
             }
         }
@@ -75,11 +78,13 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
             CryptoKey existingCryptoKey = cryptoKeyRepository.findByUuid(uuid).get();
             existingCryptoKey.setDescription(updatedCryptoKey.getDescription());
             existingCryptoKey.setProject(projectServiceImp.getProject(updatedCryptoKey.getProject()));
-            List<License> licenses = new ArrayList<>();
-            for (int i = 0; i < updatedCryptoKey.getLicensesId().size(); i++) {
-                licenses.add(licenseServiceImp.getLicense(updatedCryptoKey.getLicensesId().get(i)));
+            if (updatedCryptoKey.getLicensesId() != null) {
+                List<License> licenses = new ArrayList<>();
+                for (int i = 0; i < updatedCryptoKey.getLicensesId().size(); i++) {
+                    licenses.add(licenseServiceImp.getLicense(updatedCryptoKey.getLicensesId().get(i)));
+                }
+                existingCryptoKey.setLicenses(licenses);
             }
-            existingCryptoKey.setLicenses(licenses);
 
             cryptoKeyRepository.save(existingCryptoKey);
             return updatedCryptoKey;
@@ -87,6 +92,7 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
         throw new NotFoundException("Oops no crypto key with this id");
     }
 
+    @Transactional
     public void deleteCryptoKey(String uuid) {
         cryptoKeyRepository.deleteByUuid(uuid);
     }
@@ -97,5 +103,9 @@ public class CryptoKeyServiceImp implements CryptoKeyService {
             return cryptoKeyRepository.findByUuid(uuid).get();
         }
         throw new NotFoundException("Oops no crypto key with this id");
+    }
+
+    public void saveCryptoKey(CryptoKey cryptoKey){
+        cryptoKeyRepository.save(cryptoKey);
     }
 }

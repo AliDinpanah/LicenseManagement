@@ -12,13 +12,11 @@ public interface LicenseService {
 
     LicenseDto getLicenseById(String uuid);
 
-//    CreateLicenseDto createLicense(CreateLicenseDto licenseDto);
-
     CreateLicenseDto updateLicense(String uuid, CreateLicenseDto updatedLicenseDto);
 
     void deleteLicense(String uuid);
 
-    CreateLicenseDto createLicense(int validityDuration, String cryptoKeyId, String projectName, String customerName);
+    CreateLicenseDto createLicense(CreateLicenseDto licenseDto, String cryptoKeyId, String projectName, String customerName);
 
     LicenseDto parameterLimit(String uuid, String projectParameter, String limitation);
 

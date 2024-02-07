@@ -3,7 +3,6 @@ package teck.me.license.Controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import teck.me.license.model.Project;
 import teck.me.license.model.dto.CreateProjectDto;
 import teck.me.license.model.dto.ListProjectDto;
 import teck.me.license.model.dto.ProjectDto;
@@ -22,7 +21,7 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateProjectDto> createProject(@RequestBody CreateProjectDto projectDto) throws IllegalAccessException {
+    public ResponseEntity<CreateProjectDto> createProject(@RequestBody CreateProjectDto projectDto){
         CreateProjectDto projectDto1 = projectService.createProject(projectDto);
         return new ResponseEntity<>(projectDto1, HttpStatus.CREATED);
     }
@@ -35,20 +34,20 @@ public class ProjectController {
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProjectDto> getProjectById(@PathVariable String name) throws IllegalAccessException {
+    @GetMapping("/{name}")
+    public ResponseEntity<ProjectDto> getProjectById(@PathVariable String name){
         ProjectDto project = projectService.getProjectById(name);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CreateProjectDto> updateProject(@PathVariable String name, @RequestBody CreateProjectDto updatedProject) throws IllegalAccessException {
+    @PutMapping("/{name}")
+    public ResponseEntity<CreateProjectDto> updateProject(@PathVariable String name, @RequestBody CreateProjectDto updatedProject){
         CreateProjectDto project = projectService.updateProject(name, updatedProject);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{name}")
     public ResponseEntity<Void> deleteProject(@PathVariable String name) {
         projectService.deleteProject(name);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

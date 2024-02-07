@@ -1,5 +1,6 @@
 package teck.me.license.service.imp;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import teck.me.license.exception.ConflictException;
@@ -12,6 +13,7 @@ import teck.me.license.model.dto.*;
 import teck.me.license.repository.ProjectRepository;
 import teck.me.license.service.ProjectService;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class ProjectServiceImp implements ProjectService {
     private final ProjectRepository projectRepository;
     private final CryptoKeyServiceImp cryptoKeyServiceImp;
 
-    public ProjectServiceImp(ProjectRepository projectRepository, CryptoKeyServiceImp cryptoKeyServiceImp) {
+    public ProjectServiceImp(ProjectRepository projectRepository, @Lazy CryptoKeyServiceImp cryptoKeyServiceImp) {
         this.projectRepository = projectRepository;
         this.cryptoKeyServiceImp = cryptoKeyServiceImp;
     }
@@ -82,10 +84,12 @@ public class ProjectServiceImp implements ProjectService {
             existingProject.setDescription(updatedProjectDto.getDescription());
             existingProject.setParameters(updatedProjectDto.getParameters());
             List<CryptoKey> cryptoKeys = new ArrayList<>();
-            for (int i = 0; i < updatedProjectDto.getCryptoKeysId().size(); i++) {
-                cryptoKeys.add(cryptoKeyServiceImp.getCryptoKey(updatedProjectDto.getCryptoKeysId().get(i)));
+            if (updatedProjectDto.getCryptoKeysId() != null) {
+                for (int i = 0; i < updatedProjectDto.getCryptoKeysId().size(); i++) {
+                    cryptoKeys.add(cryptoKeyServiceImp.getCryptoKey(updatedProjectDto.getCryptoKeysId().get(i)));
+                }
+                existingProject.setCryptoKeys(cryptoKeys);
             }
-            existingProject.setCryptoKeys(cryptoKeys);
             existingProject.setName(updatedProjectDto.getName());
 
             projectRepository.save(existingProject);
@@ -94,17 +98,12 @@ public class ProjectServiceImp implements ProjectService {
         throw new NotFoundException("No Project with this id");
     }
 
+    @Transactional
     public void deleteProject(String name) {
         projectRepository.deleteByName(name);
     }
 
     //use in other services
-    public CryptoKey findKey(String uuid) {
-        if (projectRepository.findByCryptoKeys_Uuid(uuid).isPresent()) {
-            return projectRepository.findByCryptoKeys_Uuid(uuid).get();
-        }
-        throw new NotFoundException("No Project with this key");
-    }
 
     public Project getProject(String name) {
         if (projectRepository.findByName(name).isPresent()) {

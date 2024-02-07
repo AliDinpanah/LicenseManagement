@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    Optional<CryptoKey> findByCryptoKeys_Uuid(String uuid);
+    Optional<Project> findByCryptoKeysUuid(String cryptoKeyUuid);
 
     boolean existsByName(String name);
 
